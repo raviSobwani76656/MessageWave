@@ -1,60 +1,68 @@
-import React, { useState } from "react";
+import React from "react";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 function Login() {
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
+  const schema = yup.object().shape({
+    email: yup
+      .string()
+      .email("Invalid email address")
+      .required("Email is required"),
+    password: yup
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .max(20, "Password must not exceed 20 characters")
+      .required("Password is required"),
+  });
 
-  const handleChangeEmail = (e) => {
-    setEmail(e.target.value);
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(schema) });
 
-  const handleChangePassword = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    alert("Login sucessfull");
+  const onSubmit = (data) => {
+    console.log("Form submitted:", data);
   };
 
   return (
-    <>
-      <form onSubmit={handleLogin}>
-        <label htmlFor="email"></label>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="relative mb-4">
         <input
-          type="text"
-          value={email}
-          id="email"
+          type="email"
+          className="border border-gray-400 rounded py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Email"
-          onChange={handleChangeEmail}
-          required
+          {...register("email")}
         />
+        {errors.email && (
+          <span className="absolute top-full left-0 mt-1 text-sm bg-red-500 text-white px-2 py-1 rounded shadow">
+            {errors.email.message}
+          </span>
+        )}
+      </div>
 
-        <label htmlFor="password"></label>
-
+      <div className="relative mb-4">
         <input
           type="password"
-          id="password"
-          value={password}
+          className="border border-gray-400 rounded py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Password"
-          onChange={handleChangePassword}
-          required
+          {...register("password")}
         />
-        <button type="submit">Login</button>
-        <button type="button">Forgot Password</button>
-        <button type="button">Create New Account</button>
+        {errors.password && (
+          <span className="absolute top-full left-0 mt-1 text-sm bg-red-500 text-white px-2 py-1 rounded shadow">
+            {errors.password.message}
+          </span>
+        )}
+      </div>
 
-        <button className="bg-blue-9000 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded">
-          Click me
-        </button>
-        <button
-          type="button"
-          className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-        >
-          Red
-        </button>
-      </form>
-    </>
+      <button
+        type="submit"
+        className="bg-green-500 hover:bg-green-600 py-2 px-6 text-white rounded transition-colors"
+      >
+        Login
+      </button>
+    </form>
   );
 }
 
