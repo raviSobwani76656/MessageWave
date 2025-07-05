@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import axios from "axios";
 
 function Login() {
+  const [message, setMessage] = useState("");
   const schema = yup.object().shape({
     email: yup
       .string()
@@ -18,12 +20,30 @@ function Login() {
 
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log("Form submitted:", data);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/user/loginUser",
+        {
+          email: data.email,
+          password: data.password,
+        }
+      );
+      console.log("Data ", response.data);
+      reset();
+
+      setMessage("Login Sucessfull");
+    } catch (err) {
+      console.log("Error Occured While Loginning in ", err);
+      setMessage("Login Failed");
+    }
   };
 
   return (
@@ -62,6 +82,7 @@ function Login() {
       >
         Login
       </button>
+      {message && <div className="mt-4 text-green">{message}</div>}
     </form>
   );
 }

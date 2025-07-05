@@ -1,8 +1,11 @@
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import axios from "axios";
+import { useState } from "react";
 
 function CreateAccount() {
+  const [successMessage, setsuccessMessage] = useState("");
   const schema = yup.object().shape({
     name: yup.string().required("Please Enter your name"),
     email: yup.string().email().required("Please Enter the email"),
@@ -19,6 +22,7 @@ function CreateAccount() {
 
   const {
     register,
+    reset,
     handleSubmit,
     watch,
     formState: { errors },
@@ -26,8 +30,26 @@ function CreateAccount() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log("submitting thhe form", data);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/user/CreateUser",
+        {
+          name: data.name,
+          email: data.email,
+          password: data.password,
+        }
+      );
+
+      setsuccessMessage("Account Creation SuccessFull");
+
+      reset();
+    } catch (err) {
+      console.log("Error occured error", err);
+      setsuccessMessage("Account Creation failed");
+    }
   };
 
   return (
@@ -96,6 +118,11 @@ function CreateAccount() {
         >
           Create Account
         </button>
+        {successMessage && (
+          <div className="mt-4 text-center text-sm text-green-600 font-medium">
+            {successMessage}
+          </div>
+        )}
       </form>
     </>
   );
