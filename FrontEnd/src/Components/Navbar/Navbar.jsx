@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 function Navbar() {
   return (
     <>
-      <nav className="bg-blue-500 text-white p-4 flex justify-between w-full mb-16">
+      <nav className=" bg-blue-500 text-white p-4 flex justify-between mb-16">
         <div>ChatApp</div>
         <div>
           <NavLink
@@ -30,6 +30,22 @@ function Navbar() {
             }
           >
             Contacts
+          </NavLink>
+          <NavLink
+            to="/login"
+            className={({ isActive }) =>
+              isActive ? "underline font-bold" : "hover:underline"
+            }
+          >
+            Login
+          </NavLink>
+          <NavLink
+            to="/createAccount"
+            className={({ isActive }) =>
+              isActive ? "underline font-bold" : "hover:underline"
+            }
+          >
+            Create Account
           </NavLink>
         </div>
       </nav>
