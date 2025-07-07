@@ -1,6 +1,6 @@
 const { DataTypes, DATEONLY } = require("sequelize");
 const sequelize = require("../config/db");
-const e = require("express");
+const express = require("express");
 
 const User = sequelize.define("User", {
   name: {

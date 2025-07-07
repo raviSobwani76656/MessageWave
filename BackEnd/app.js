@@ -3,12 +3,12 @@ require("dotenv").config();
 const app = express();
 const userRoutes = require("./routes/UserRoute");
 const cors = require("cors");
-
+const messageRoutes = require("./routes/MessageRoute");
 require("./config/db");
+app.use(express.json());
 
 app.use(cors());
-
-app.use(express.json());
+app.use("/message", messageRoutes);
 
 app.use("/user", userRoutes);
 
