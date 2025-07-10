@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const jwtTotkenGenerator = require("../utils/JwtTokenGenerator");
 
 const createUser = async (req, res) => {
   try {
@@ -59,14 +60,47 @@ const loginUser = async (req, res) => {
         .json({ status: false, message: "Invalid password" });
     }
 
+    const token = jwtTotkenGenerator({
+      id: userToLogin.id,
+      email: userToLogin.email,
+      name: userToLogin.name,
+    });
+
     return res
       .status(201)
-      .json({ status: true, message: "User login Succesfull" });
+      .json({ status: true, message: "User login Succesfull", token });
   } catch (err) {
     console.log("Error Occured while logging in", err);
     return res
       .status(400)
       .json({ status: false, message: "Error Occrured while logging in " });
+  }
+};
+
+const getAllUsers = async (req, res) => {
+  try {
+    const { senderId, receiverId } = req.body;
+
+    if (!senderId || receiverId) {
+      console.log("Both senderID and receierId needed to be present");
+      return res.status(400).json({
+        status: false,
+        message: "Both SenderId and receiverId needed to be present",
+      });
+    }
+
+    const allUsers = await User.findAll({
+      where: { senderId, receiverId },
+      order: [[]],
+    });
+
+    res.status().json({ status: true, message: "Users Fetched SuccessFully" });
+  } catch (err) {
+    console.log("Error Occured while fetching the users", err);
+    return res.status(500).json({
+      status: false,
+      message: "Error Occured while fetching the users",
+    });
   }
 };
 
