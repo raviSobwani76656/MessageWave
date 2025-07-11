@@ -1,4 +1,4 @@
-const jwtSecret = require("../config");
+const { jwtSecret } = require("../config");
 const jwt = require("jsonwebtoken");
 
 const jwtTotkenGenerator = (payload) => {

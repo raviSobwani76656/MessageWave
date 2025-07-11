@@ -1,7 +1,6 @@
-const app = require("./app");
+const { app, server } = require("./app");
 require("dotenv").config();
 const sequelize = require("./config/db");
-const conrs = require("cors");
 
 const PORT = process.env.PORT || 5000;
 
@@ -11,7 +10,7 @@ sequelize
   .then(() => {
     console.log("Database synced successfully.");
     // Start the server after DB sync
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
   })

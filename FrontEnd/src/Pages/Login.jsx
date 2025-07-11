@@ -3,9 +3,15 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
+import socket from "../../socket";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [message, setMessage] = useState("");
+
+  const navigate = useNavigate();
+
   const schema = yup.object().shape({
     email: yup
       .string()
@@ -26,8 +32,6 @@ function Login() {
   } = useForm({ resolver: yupResolver(schema) });
 
   const onSubmit = async (data) => {
-    console.log("Form submitted:", data);
-
     try {
       const response = await axios.post(
         "http://localhost:5000/user/loginUser",
@@ -36,12 +40,33 @@ function Login() {
           password: data.password,
         }
       );
-      console.log("Data ", response.data);
-      reset();
 
-      setMessage("Login Sucessfull");
+      const token = response.data.token;
+      console.log("Raw token:", token);
+
+      const decoded = jwtDecode(token);
+      console.log("Decoded token:", decoded);
+
+      const roomId = decoded.id;
+      const userId = decoded.id;
+
+      if (!socket.connected) {
+        socket.connect();
+      }
+
+      socket.emit("join-room", {
+        userId,
+        roomId,
+      });
+
+      reset();
+      setMessage("Login Successful");
+
+      navigate("/login", {
+        state: { useName: decoded.name, userId: decoded.userId, room: roomId },
+      });
     } catch (err) {
-      console.log("Error Occured While Loginning in ", err);
+      console.error("Login error:", err);
       setMessage("Login Failed");
     }
   };
@@ -54,6 +79,7 @@ function Login() {
           className="border border-gray-400 rounded py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Email"
           {...register("email")}
+          autoComplete="off"
         />
         {errors.email && (
           <span className="absolute top-full left-0 mt-1 text-sm bg-red-500 text-white px-2 py-1 rounded shadow">
@@ -68,6 +94,7 @@ function Login() {
           className="border border-gray-400 rounded py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Password"
           {...register("password")}
+          autoComplete="off"
         />
         {errors.password && (
           <span className="absolute top-full left-0 mt-1 text-sm bg-red-500 text-white px-2 py-1 rounded shadow">
