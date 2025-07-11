@@ -4,7 +4,7 @@ const { Op } = require("sequelize");
 const sendMessage = async (req, res) => {
   try {
     // Log the incoming request
-    console.log("📥 Request Body:", req.body);
+    console.log(" Request Body:", req.body);
 
     const { senderId, receiverId, content } = req.body;
 
@@ -57,6 +57,7 @@ const getMessage = async (req, res) => {
       order: [["createdAt", "ASC"]],
     });
 
+    console.log("hehehrh");
     return res.status(200).json({
       status: true,
       message: "Messages retreived Successfully",
