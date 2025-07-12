@@ -92,7 +92,6 @@ const deleteMessage = async (req, res) => {
         message: "Message not found or already deleted",
       });
     }
-    console.log("'jadlgsd");
 
     return res
       .status(200)

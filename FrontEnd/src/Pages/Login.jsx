@@ -6,9 +6,11 @@ import axios from "axios";
 import socket from "../../socket";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaLock, FaEyeSlash } from "react-icons/fa";
 
 function Login() {
   const [message, setMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -38,8 +40,13 @@ function Login() {
         {
           email: data.email,
           password: data.password,
+        },
+        {
+          withCredentials: true,
         }
       );
+
+      console.log(response.data.message);
 
       const token = response.data.token;
       console.log("Raw token:", token);
@@ -81,6 +88,7 @@ function Login() {
           {...register("email")}
           autoComplete="off"
         />
+
         {errors.email && (
           <span className="absolute top-full left-0 mt-1 text-sm bg-red-500 text-white px-2 py-1 rounded shadow">
             {errors.email.message}
@@ -90,12 +98,19 @@ function Login() {
 
       <div className="relative mb-4">
         <input
-          type="password"
+          type={showPassword ? "text" : "password"}
           className="border border-gray-400 rounded py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Password"
           {...register("password")}
           autoComplete="off"
         />
+        <span
+          onClick={() => {
+            setShowPassword((prev) => !prev);
+          }}
+        >
+          {showPassword ? <FaEye /> : <FaEyeSlash />}
+        </span>
         {errors.password && (
           <span className="absolute top-full left-0 mt-1 text-sm bg-red-500 text-white px-2 py-1 rounded shadow">
             {errors.password.message}

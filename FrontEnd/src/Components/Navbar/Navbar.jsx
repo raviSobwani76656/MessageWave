@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
+import handleLogout from "../../utils/Logout";
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -99,6 +102,16 @@ function Navbar() {
           >
             Create Account
           </NavLink>
+          <button
+            onClick={() => {
+              handleLogout(navigate);
+              setIsMenuOpen(false);
+            }}
+            className="text-gray-100 text-lg px-4 py-2 hover:underline"
+          >
+            {" "}
+            Logout
+          </button>
         </div>
       </div>
     </nav>

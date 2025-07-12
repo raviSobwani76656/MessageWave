@@ -10,14 +10,22 @@ require("./config/db");
 app.use(express.json());
 const { Server } = require("socket.io");
 const sequelize = require("./config/db");
+const cookieParser = require("cookie-parser");
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+app.use(cookieParser());
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: "http://localhost:5173",
+    credentials: "true",
   },
 });
 

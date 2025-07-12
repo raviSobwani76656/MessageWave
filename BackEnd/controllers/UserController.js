@@ -66,6 +66,13 @@ const loginUser = async (req, res) => {
       name: userToLogin.name,
     });
 
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
+      maxAge: 60 * 60 * 1000,
+    });
+
     return res
       .status(201)
       .json({ status: true, message: "User login Succesfull", token });
@@ -75,6 +82,11 @@ const loginUser = async (req, res) => {
       .status(400)
       .json({ status: false, message: "Error Occrured while logging in " });
   }
+};
+
+const logout = async (req, res) => {
+  res.clearCookie("jwt");
+  return res.status(201).json({ status: true, message: "Logout SuccessFull" });
 };
 
 const getAllUsers = async (req, res) => {
@@ -124,4 +136,4 @@ const getAllUsers = async (req, res) => {
 
 // }
 
-module.exports = { createUser, loginUser };
+module.exports = { createUser, loginUser, logout };
