@@ -21,6 +21,7 @@ function App() {
         <Route path="/createAccount" element={<CreateAccount />} />
         <Route path="/messages" element={<Messages />} />
       </Routes>
+
       <Footer />
     </>
   );

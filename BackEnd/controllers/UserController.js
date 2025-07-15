@@ -85,8 +85,15 @@ const loginUser = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  res.clearCookie("jwt");
-  return res.status(201).json({ status: true, message: "Logout SuccessFull" });
+  try {
+    res.clearCookie("jwt");
+    return res
+      .status(201)
+      .json({ status: true, message: "Logout SuccessFull" });
+  } catch (err) {
+    console.log("Error Occured While loggin out", err);
+    res.json(500).json({ status: false, message: "Internal Server Error" });
+  }
 };
 
 const getAllUsers = async (req, res) => {
@@ -116,6 +123,29 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+const getUser = async (req, res) => {
+  try {
+    const userToGet = req.user.id;
+
+    const currentUser = await User.findByPk(userToGet, {
+      attributes: { exclude: ["password"] },
+    });
+
+    if (!currentUser) {
+      console.log("Desired User does not Exist");
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ user: currentUser });
+  } catch (e) {
+    console.log("Error Occurred:", e.message);
+    res.status(500).json({
+      status: false,
+      message: "Error occurred while getting the user",
+    });
+  }
+};
+
 // const forgotPassword = async (req, res) => {
 //     try{
 //   const { email } = req.body;
@@ -136,4 +166,4 @@ const getAllUsers = async (req, res) => {
 
 // }
 
-module.exports = { createUser, loginUser, logout };
+module.exports = { createUser, loginUser, logout, getUser };

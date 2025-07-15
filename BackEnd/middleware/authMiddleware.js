@@ -2,22 +2,13 @@ const { jwtSecret } = require("../config/index");
 const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
-  // const authToken = req.headers["authorization"];
-
-  // if (!authToken || !authToken.startsWith("Bearer ")) {
-  //   console.log("No Token Provided");
-  //   return res
-  //     .status(401)
-  //     .json({ status: false, message: "No Token Provided" });
-  // }
-
-  // const token = authToken.split(" ")[1];
-
   token = req.cookies.jwt;
 
   if (!token) {
-    console.log("token not available");
-    res.status(400).json({ status: false, message: "Token not available" });
+    console.log("Unauthorised-Token Not Provided");
+    res
+      .status(400)
+      .json({ status: false, message: "Unauthorised-Token Not Provided" });
   }
 
   try {
