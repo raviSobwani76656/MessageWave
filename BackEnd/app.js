@@ -11,6 +11,7 @@ app.use(express.json());
 const { Server } = require("socket.io");
 const sequelize = require("./config/db");
 const cookieParser = require("cookie-parser");
+const Messages = require("./models/Messages");
 
 app.use(
   cors({
@@ -30,27 +31,33 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log("message sender", socket.id);
+  console.log("New socket connected:", socket.id);
 
   socket.on("join-room", ({ userId, roomId }) => {
     socket.join(roomId);
-    console.log(`User with the ${userId}joined the room with id ${roomId}`);
+    console.log(`User ${userId} joined room ${roomId}`);
   });
 
-  socket.on("send-message", (data) => {
-    console.log("Data", data);
-  });
+  socket.on("send-message", (messageData) => {
+    const { room } = messageData;
+    console.log("Message received:", messageData);
 
-  socket.on("message chat", (msg) => {
-    console.log("message", msg);
-    io.emit("message send ", msg);
+    const { message, time } = messageData;
+
+    try {
+      const messageSave = Messages.create({ content: message, time });
+      console.log("Message Saved in the database Succesfully");
+    } catch (e) {
+      console.log("Error Occured While saving the message");
+    }
+
+    io.to(room).emit("receive_message", messageData);
   });
 
   socket.on("disconnect", () => {
-    console.log("sender disconned", socket.id);
+    console.log("Socket disconnected:", socket.id);
   });
 });
-
 app.use("/message", messageRoutes);
 
 app.use("/user", userRoutes);
