@@ -7,8 +7,10 @@ import socket from "../../socket";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaLock, FaEyeSlash } from "react-icons/fa";
+import { useUserStore } from "../store/userStore";
 
 function Login() {
+  const { setLoading, setUser } = useUserStore();
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
@@ -53,6 +55,8 @@ function Login() {
 
       const decoded = jwtDecode(token);
       console.log("Decoded token:", decoded);
+
+      setUser(decoded);
 
       const roomId = decoded.id;
       const userId = decoded.id;
