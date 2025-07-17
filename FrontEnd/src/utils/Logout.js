@@ -1,8 +1,6 @@
 import axios from "axios";
-import { useUserStore } from "../store/userStore";
 
-export default async function handleLogout(navigate) {
-  const { setUser } = useUserStore();
+export default async function handleLogout(navigate, clearUser) {
   try {
     await axios.post(
       "http://localhost:5000/user/logout",
@@ -14,7 +12,7 @@ export default async function handleLogout(navigate) {
 
     console.log("Logout successful");
     navigate("/login");
-    setUser(null);
+    clearUser();
   } catch (err) {
     console.log("Logout Failed", err);
   }

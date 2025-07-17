@@ -9,9 +9,12 @@ import Footer from "./Components/Navbar/Footer";
 import Messages from "./Pages/Messages";
 import { useUserStore } from "./store/userStore";
 import { axiosInstance } from "./API/axios";
+import { ToastContainer, toast } from "react-toastify";
 
 function App() {
   const { setUser, user, setLoading } = useUserStore();
+  let isLoggedIn = useUserStore((state) => state.isLoggedIn());
+  const notify = () => toast("🎉 This is a toast notification!");
 
   useEffect(() => {
     if (!user) {
@@ -26,6 +29,7 @@ function App() {
   return (
     <>
       <Navbar />
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

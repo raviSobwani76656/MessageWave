@@ -10,9 +10,9 @@ import { FaEye, FaLock, FaEyeSlash } from "react-icons/fa";
 import { useUserStore } from "../store/userStore";
 
 function Login() {
-  const { setLoading, setUser } = useUserStore();
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const { setLoading, setUser } = useUserStore();
 
   const navigate = useNavigate();
 

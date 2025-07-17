@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import handleLogout from "../../utils/Logout";
 import { useNavigate } from "react-router-dom";
+import { useUserStore } from "../../store/userStore";
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,6 +11,10 @@ function Navbar() {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  const user = useUserStore((state) => state.user);
+  const clearUser = useUserStore((state) => state.clearUser);
+  const isLoggedIn = !!user;
 
   return (
     <nav className="bg-blue-500 text-white p-4 fixed top-0 left-0 right-0 z-50 shadow-md">
@@ -80,17 +85,20 @@ function Navbar() {
           >
             Contacts
           </NavLink>
-          <NavLink
-            to="/login"
-            className={({ isActive }) =>
-              `text-gray-100 text-lg px-4 py-2 ${
-                isActive ? "underline font-bold" : "hover:underline"
-              }`
-            }
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Login
-          </NavLink>
+          {!isLoggedIn && (
+            <NavLink
+              to="/login"
+              className={({ isActive }) =>
+                `text-gray-100 text-lg px-4 py-2 ${
+                  isActive ? "underline font-bold" : "hover:underline"
+                }`
+              }
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Login
+            </NavLink>
+          )}
+
           <NavLink
             to="/createAccount"
             className={({ isActive }) =>
@@ -102,16 +110,18 @@ function Navbar() {
           >
             Create Account
           </NavLink>
-          <button
-            onClick={() => {
-              handleLogout(navigate);
-              setIsMenuOpen(false);
-            }}
-            className="text-gray-100 text-lg px-4 py-2 hover:underline"
-          >
-            {" "}
-            Logout
-          </button>
+          {isLoggedIn && (
+            <button
+              onClick={() => {
+                handleLogout(navigate);
+                setIsMenuOpen(false);
+              }}
+              className="text-gray-100 text-lg px-4 py-2 hover:underline"
+            >
+              {" "}
+              Logout
+            </button>
+          )}
         </div>
       </div>
     </nav>
