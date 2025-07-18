@@ -4,13 +4,13 @@ import Login from "./Pages/Login";
 import CreateAccount from "./Pages/CreateAccount";
 import Navbar from "./Components/Navbar/Navbar";
 import { Home } from "./Pages/Home";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Footer from "./Components/Navbar/Footer";
 import Messages from "./Pages/Messages";
 import { useUserStore } from "./store/userStore";
 import { axiosInstance } from "./API/axios";
 import { ToastContainer, toast } from "react-toastify";
-
+import { Loader } from "lucide-react";
 function App() {
   const { setUser, user, setLoading } = useUserStore();
   let isLoggedIn = useUserStore((state) => state.isLoggedIn());
@@ -26,15 +26,26 @@ function App() {
     }
   }, [user]);
 
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader className="size-10 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <>
       <Navbar />
       <ToastContainer />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={!user ? <Home /> : <Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/createAccount" element={<CreateAccount />} />
-        <Route path="/messages" element={<Messages />} />
+        <Route
+          path="/messages"
+          element={!user ? <Messages /> : <Navigate to="/login" />}
+        />
       </Routes>
       <Footer />
     </>

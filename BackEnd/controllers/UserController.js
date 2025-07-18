@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwtTotkenGenerator = require("../utils/JwtTokenGenerator");
+import Cloudinary from "../utils/cloudinary";
 
 const createUser = async (req, res) => {
   try {
@@ -96,24 +97,20 @@ const logout = async (req, res) => {
   }
 };
 
-const getAllUsers = async (req, res) => {
+const getAllUsersForSidebar = async (req, res) => {
   try {
-    const { senderId, receiverId } = req.body;
+    const loggedInUserId = req.user.id;
 
-    if (!senderId || receiverId) {
-      console.log("Both senderID and receierId needed to be present");
-      return res.status(400).json({
-        status: false,
-        message: "Both SenderId and receiverId needed to be present",
-      });
-    }
-
-    const allUsers = await User.findAll({
-      where: { senderId, receiverId },
-      order: [[]],
+    const filteredUsers = await User.findAll({
+      where: {
+        id: { [Op.ne]: loggedInUserId }, // Exclude the logged-in user
+      },
+      attributes: { exclude: ["password"] }, //Exclude password field
     });
 
-    res.status().json({ status: true, message: "Users Fetched SuccessFully" });
+    res
+      .status(200)
+      .json({ status: true, message: "Users Fetched SuccessFully" });
   } catch (err) {
     console.log("Error Occured while fetching the users", err);
     return res.status(500).json({
@@ -166,4 +163,40 @@ const getUser = async (req, res) => {
 
 // }
 
-module.exports = { createUser, loginUser, logout, getUser };
+const updateProfile = async (req, res) => {
+  try {
+    const { profilePic } = req.body;
+
+    const userId = req.user.id;
+
+    if (!profilePic) {
+      console.log("Profile Pic is Required");
+      res
+        .status(400)
+        .json({ status: false, message: "Profile Pic is Required" });
+    }
+
+    const uploadedImage = await Cloudinary.uploader.upload(profilePic);
+
+    await User.update(
+      { profilePic: uploadedImage.secure_url },
+      { where: { id: userId } }
+    );
+
+    res
+      .status(200)
+      .json({ status: true, message: "User Updated successFully " });
+  } catch (error) {
+    console.log("Error Occured While uploading the image", error);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
+  }
+};
+
+module.exports = {
+  createUser,
+  loginUser,
+  logout,
+  getUser,
+  getAllUsersForSidebar,
+  updateProfile,
+};

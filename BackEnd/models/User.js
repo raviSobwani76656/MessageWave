@@ -20,6 +20,11 @@ const User = sequelize.define("User", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+
+  profilePic: {
+    type: DataTypes.STRING,
+    defaultValue: "",
+  },
 });
 
 module.exports = User;
