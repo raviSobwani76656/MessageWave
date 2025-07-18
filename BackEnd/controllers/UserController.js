@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwtTotkenGenerator = require("../utils/JwtTokenGenerator");
-import Cloudinary from "../utils/cloudinary";
+import cloudinary from "../utils/cloudinary.js";
 
 const createUser = async (req, res) => {
   try {
@@ -176,7 +176,7 @@ const updateProfile = async (req, res) => {
         .json({ status: false, message: "Profile Pic is Required" });
     }
 
-    const uploadedImage = await Cloudinary.uploader.upload(profilePic);
+    const uploadedImage = await cloudinary.uploader.upload(profilePic);
 
     await User.update(
       { profilePic: uploadedImage.secure_url },

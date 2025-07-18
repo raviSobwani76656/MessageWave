@@ -13,26 +13,24 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 fixed top-0 left-0 right-0 z-50 shadow-lg">
+    <nav className="bg-white text-gray-800 p-2 fixed top-0 left-0 right-0 z-50 border-b border-gray-200">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
-        <div className="px-4 font-bold text-xl flex items-center gap-2 group">
-          <MessageSquare className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" />
-          <span className="group-hover:text-blue-200 transition-colors duration-200">
-            MessageWave
-          </span>
+        <div className="px-2 font-bold text-lg flex items-center gap-2">
+          <MessageSquare className="w-5 h-5 text-blue-600" />
+          <span className="tracking-tight">MessageWave</span>
         </div>
 
         {/* Hamburger Menu Button for Mobile */}
         <button
-          className="md:hidden focus:outline-none p-2 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+          className="md:hidden p-1 rounded hover:bg-gray-100 focus:outline-none"
           onClick={toggleMenu}
           aria-label="Toggle menu"
         >
           {isMenuOpen ? (
-            <X className="w-6 h-6 animate-spin-slow" />
+            <X className="w-5 h-5" />
           ) : (
-            <Menu className="w-6 h-6" />
+            <Menu className="w-5 h-5" />
           )}
         </button>
 
@@ -40,19 +38,19 @@ function Navbar() {
         <div
           className={`${
             isMenuOpen ? "flex" : "hidden"
-          } md:flex flex-col md:flex-row absolute md:static top-16 left-0 right-0 bg-gradient-to-r from-blue-600 to-indigo-600 md:bg-transparent md:items-center space-y-4 md:space-y-0 md:space-x-6 p-6 md:p-0 transition-all duration-500 ease-in-out transform ${
+          } md:flex flex-col md:flex-row absolute md:static top-12 left-0 right-0 bg-white md:bg-transparent md:items-center space-y-2 md:space-y-0 md:space-x-4 p-4 md:p-0 transition-all duration-300 ease-in-out transform ${
             isMenuOpen
               ? "translate-y-0 opacity-100"
               : "-translate-y-4 opacity-0 md:translate-y-0 md:opacity-100"
-          }`}
+          } border-b border-gray-200 md:border-none`}
         >
           <NavLink
             to="/"
             className={({ isActive }) =>
-              `text-gray-100 text-lg px-4 py-2 rounded-md transition-all duration-200 ${
+              `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
                 isActive
-                  ? "bg-blue-800 font-bold shadow-md"
-                  : "hover:bg-blue-700 hover:shadow-md"
+                  ? "bg-gray-100 text-blue-600 font-semibold"
+                  : "hover:text-blue-600"
               }`
             }
             onClick={() => setIsMenuOpen(false)}
@@ -62,10 +60,10 @@ function Navbar() {
           <NavLink
             to="/messages"
             className={({ isActive }) =>
-              `text-gray-100 text-lg px-4 py-2 rounded-md transition-all duration-200 ${
+              `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
                 isActive
-                  ? "bg-blue-800 font-bold shadow-md"
-                  : "hover:bg-blue-700 hover:shadow-md"
+                  ? "bg-gray-100 text-blue-600 font-semibold"
+                  : "hover:text-blue-600"
               }`
             }
             onClick={() => setIsMenuOpen(false)}
@@ -75,10 +73,10 @@ function Navbar() {
           <NavLink
             to="/contacts"
             className={({ isActive }) =>
-              `text-gray-100 text-lg px-4 py-2 rounded-md transition-all duration-200 ${
+              `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
                 isActive
-                  ? "bg-blue-800 font-bold shadow-md"
-                  : "hover:bg-blue-700 hover:shadow-md"
+                  ? "bg-gray-100 text-blue-600 font-semibold"
+                  : "hover:text-blue-600"
               }`
             }
             onClick={() => setIsMenuOpen(false)}
@@ -88,10 +86,10 @@ function Navbar() {
           <NavLink
             to="/login"
             className={({ isActive }) =>
-              `text-gray-100 text-lg px-4 py-2 rounded-md transition-all duration-200 ${
+              `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
                 isActive
-                  ? "bg-blue-800 font-bold shadow-md"
-                  : "hover:bg-blue-700 hover:shadow-md"
+                  ? "bg-gray-100 text-blue-600 font-semibold"
+                  : "hover:text-blue-600"
               }`
             }
             onClick={() => setIsMenuOpen(false)}
@@ -101,10 +99,10 @@ function Navbar() {
           <NavLink
             to="/createAccount"
             className={({ isActive }) =>
-              `text-gray-100 text-lg px-4 py-2 rounded-md transition-all duration-200 ${
+              `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
                 isActive
-                  ? "bg-blue-800 font-bold shadow-md"
-                  : "hover:bg-blue-700 hover:shadow-md"
+                  ? "bg-gray-100 text-blue-600 font-semibold"
+                  : "hover:text-blue-600"
               }`
             }
             onClick={() => setIsMenuOpen(false)}
@@ -116,10 +114,23 @@ function Navbar() {
               handleLogout(navigate);
               setIsMenuOpen(false);
             }}
-            className="text-gray-100 text-lg px-4 py-2 rounded-md hover:bg-red-600 hover:shadow-md transition-all duration-200"
+            className="text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-red-100 hover:text-red-600"
           >
             Logout
           </button>
+          <NavLink
+            to="/profile"
+            className={({ isActive }) =>
+              `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
+                isActive
+                  ? "bg-gray-100 text-blue-600 font-semibold"
+                  : "hover:text-blue-600"
+              }`
+            }
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Profile
+          </NavLink>
         </div>
       </div>
     </nav>

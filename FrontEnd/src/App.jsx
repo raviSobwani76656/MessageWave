@@ -11,6 +11,7 @@ import { useUserStore } from "./store/userStore";
 import { axiosInstance } from "./API/axios";
 import { ToastContainer, toast } from "react-toastify";
 import { Loader } from "lucide-react";
+import Profile from "./Pages/Profile";
 function App() {
   const { setUser, user, setLoading } = useUserStore();
   let isLoggedIn = useUserStore((state) => state.isLoggedIn());
@@ -36,18 +37,24 @@ function App() {
 
   return (
     <>
-      <Navbar />
-      <ToastContainer />
-      <Routes>
-        <Route path="/" element={!user ? <Home /> : <Navigate to="/login" />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/createAccount" element={<CreateAccount />} />
-        <Route
-          path="/messages"
-          element={!user ? <Messages /> : <Navigate to="/login" />}
-        />
-      </Routes>
-      <Footer />
+      <div data-theme="cupcake">
+        <Navbar />
+        <ToastContainer />
+        <Routes>
+          <Route
+            path="/"
+            element={!user ? <Home /> : <Navigate to="/login" />}
+          />
+          <Route path="/login" element={<Login />} />
+          <Route path="/createAccount" element={<CreateAccount />} />
+          <Route
+            path="/messages"
+            element={!user ? <Messages /> : <Navigate to="/login" />}
+          />
+          <Route path="/profile" element={<Profile />} />
+        </Routes>
+        <Footer />
+      </div>
     </>
   );
 }
