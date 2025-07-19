@@ -6,14 +6,14 @@ const verifyToken = (req, res, next) => {
 
   if (!token) {
     console.log("Unauthorised-Token Not Provided");
-    res
+    return res
       .status(400)
       .json({ status: false, message: "Unauthorised-Token Not Provided" });
   }
 
   try {
     const decoded = jwt.verify(token, jwtSecret);
-    return (req.user = decoded);
+    req.user = decoded;
     next();
   } catch (err) {
     console.log("Invalid Token", err);

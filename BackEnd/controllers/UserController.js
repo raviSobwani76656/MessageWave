@@ -1,7 +1,9 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwtTotkenGenerator = require("../utils/JwtTokenGenerator");
-import cloudinary from "../utils/cloudinary.js";
+const cloudinary = require("../utils/cloudinary");
+
+const streamifier = require("streamifier");
 
 const createUser = async (req, res) => {
   try {
@@ -167,28 +169,32 @@ const updateProfile = async (req, res) => {
   try {
     const { profilePic } = req.body;
 
-    const userId = req.user.id;
-
-    if (!profilePic) {
-      console.log("Profile Pic is Required");
-      res
-        .status(400)
-        .json({ status: false, message: "Profile Pic is Required" });
+    if (!profilePic || !profilePic.startsWith("data:image/")) {
+      return res.status(400).json({ message: "Invalid image format" });
     }
 
-    const uploadedImage = await cloudinary.uploader.upload(profilePic);
+    const base64Data = profilePic.replace(/^data:image\/\w+;base64,/, "");
+    const buffer = Buffer.from(base64Data, "base64");
 
-    await User.update(
-      { profilePic: uploadedImage.secure_url },
-      { where: { id: userId } }
-    );
+    const streamUpload = (buffer) => {
+      return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "profile_pics" },
+          (error, result) => {
+            if (result) resolve(result);
+            else reject(error);
+          }
+        );
+        streamifier.createReadStream(buffer).pipe(stream);
+      });
+    };
 
-    res
-      .status(200)
-      .json({ status: true, message: "User Updated successFully " });
+    const result = await streamUpload(buffer);
+
+    return res.status(200).json({ url: result.secure_url });
   } catch (error) {
-    console.log("Error Occured While uploading the image", error);
-    res.status(500).json({ status: false, message: "Internal Server Error" });
+    console.error("Upload error:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
