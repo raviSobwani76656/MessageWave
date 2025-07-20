@@ -5,6 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
 import { User, Mail, Lock, Eye, EyeOff, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function CreateAccount() {
   const [successMessage, setSuccessMessage] = useState("");
@@ -46,8 +47,8 @@ function CreateAccount() {
         }
       );
 
-      setSuccessMessage("Account Creation Successful");
       reset();
+      toast.success("Account Created Successfully");
     } catch (err) {
       console.log("Error occurred:", err);
       setSuccessMessage("Account Creation Failed");
