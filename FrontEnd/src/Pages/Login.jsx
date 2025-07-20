@@ -8,6 +8,7 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate, Link } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, MessageSquare } from "lucide-react";
 import { useUserStore } from "../store/userStore";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [message, setMessage] = useState("");
@@ -60,7 +61,8 @@ const Login = () => {
       socket.emit("join-room", { userId, roomId });
 
       reset();
-      setMessage("Login Successful");
+
+      toast.success("Login Succesfull");
 
       navigate("/login", {
         state: { useName: decoded.name, userId: decoded.userId, room: roomId },
