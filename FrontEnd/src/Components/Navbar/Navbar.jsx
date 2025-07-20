@@ -3,8 +3,10 @@ import { NavLink } from "react-router-dom";
 import handleLogout from "../../utils/Logout";
 import { useNavigate } from "react-router-dom";
 import { Menu, X, MessageSquare } from "lucide-react";
+import toast from "react-hot-toast";
 
 function Navbar() {
+  const logouttoast = () => toast.success("Logout Successfull");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -113,6 +115,7 @@ function Navbar() {
             onClick={() => {
               handleLogout(navigate);
               setIsMenuOpen(false);
+              logouttoast();
             }}
             className="text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-red-100 hover:text-red-600"
           >
