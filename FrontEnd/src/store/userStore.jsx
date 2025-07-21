@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { axiosInstance } from "../API/axios";
+import { axiosInstance } from "../API/axios"; // Axios setup
 
 export const useUserStore = create(
   persist(
@@ -9,34 +9,31 @@ export const useUserStore = create(
       loading: false,
       isUserUpdating: false,
 
-      setUser: (user) => set({ user }), // set user
-      clearUser: () => set({ user: null }), // clear user
-      setLoading: (loading) => set({ loading }), // set loading state
-
+      setUser: (user) => set({ user }),
+      clearUser: () => set({ user: null }),
+      setLoading: (loading) => set({ loading }),
       isLoggedIn: () => !!get().user,
 
-      updateProfile: async function () {
+      updateProfile: async (base64Image) => {
         set({ isUserUpdating: true });
         try {
-          const response = await axiosInstance.put(
+          const userId = get().user?.id;
+          const response = await axiosInstance.post(
             "/user/updateProfile",
-            { profilePic },
-
-            {
-              withCredentials: true,
-            }
+            { profilePic: base64Image, id: userId },
+            { withCredentials: true }
           );
           set({ user: response.data });
         } catch (error) {
-          console.log("Error Updating Profile", error);
+          console.error("Error updating profile", error);
         } finally {
           set({ isUserUpdating: false });
         }
       },
     }),
     {
-      name: "user-localstorage", // key for localStorage
-      partialize: (state) => ({ user: state.user }), // only persist `user`
+      name: "user-localstorage",
+      partialize: (state) => ({ user: state.user }),
     }
   )
 );

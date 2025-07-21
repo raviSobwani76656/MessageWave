@@ -2,7 +2,6 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwtTotkenGenerator = require("../utils/JwtTokenGenerator");
 const cloudinary = require("../utils/cloudinary");
-
 const streamifier = require("streamifier");
 
 const createUser = async (req, res) => {
@@ -191,7 +190,25 @@ const updateProfile = async (req, res) => {
 
     const result = await streamUpload(buffer);
 
-    return res.status(200).json({ url: result.secure_url });
+    if (!result || !result.secure_url) {
+      return res.status(500).json({ message: "Failed to upload image" });
+    }
+
+    console.log("Incoming update request:", req.body);
+
+    const userId = req.body.id;
+    console.log("User ID:", userId);
+
+    await User.update(
+      {
+        profilePic: result.secure_url,
+      },
+      { where: { id: userId } }
+    );
+
+    const updatedUser = await User.findByPk(userId);
+
+    return res.status(200).json(updatedUser);
   } catch (error) {
     console.error("Upload error:", error);
     return res.status(500).json({ message: "Server error" });

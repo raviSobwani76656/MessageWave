@@ -1,4 +1,4 @@
-import { Camera } from "lucide-react";
+import { Camera, Mail, User } from "lucide-react";
 import React, { useState } from "react";
 import { useUserStore } from "../store/userStore";
 
@@ -34,71 +34,88 @@ function Profile() {
     reader.onload = async () => {
       const base64Image = reader.result;
       setPreviewImage(base64Image); // update preview with final image
-      await updateProfile({ profilePic: base64Image }); // upload
+      await updateProfile(base64Image);
     };
   };
 
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">Profile</h1>
-        <p className="text-gray-600 mb-6">Your Account Info</p>
+  console.log("user", user);
 
-        {/* Profile image preview */}
-        <div className="flex justify-center mb-6">
-          <div className="relative">
-            <img
-              src={previewImage || user.profilePic}
-              alt="Profile"
-              className="w-32 h-32 object-cover rounded-full border-2 border-gray-300"
-            />
-            <label
-              htmlFor="image-upload"
-              className="absolute bottom-0 right-0 bg-blue-500 p-2 rounded-full cursor-pointer hover:bg-blue-600 transition"
+  return (
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 p-4">
+      <div className="w-full max-w-5xl mx-auto p-8 bg-white rounded-lg shadow-lg">
+        <div className="flex flex-col md:flex-row items-start gap-10">
+          {/* Avatar upload section */}
+          <div className="flex flex-col items-center gap-4 w-full md:w-1/3">
+            <div className="relative">
+              <div className="w-40 h-40 rounded-full border-2 border-gray-200 border-dashed flex items-center justify-center overflow-hidden">
+                <img
+                  src={previewImage || user.profilePic || "/avatar.png"}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <label
+                htmlFor="avatar-upload"
+                className={`absolute bottom-2 right-2 bg-blue-600 p-2 rounded-full cursor-pointer hover:bg-blue-700 transition-all duration-200 ${
+                  isUserUpdating ? "animate-pulse pointer-events-none" : ""
+                }`}
+              >
+                <Camera className="w-5 h-5 text-white" />
+                <input
+                  type="file"
+                  id="avatar-upload"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleChange}
+                  disabled={isUserUpdating}
+                />
+              </label>
+            </div>
+            <p className="text-sm text-gray-500 text-center">
+              {isUserUpdating
+                ? "Uploading..."
+                : "Click the camera icon to update your photo"}
+            </p>
+            <button
+              type="button"
+              onClick={handleUploadImage}
+              disabled={!selectedImage || isUserUpdating}
+              className="w-full max-w-xs bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              <Camera className="w-5 h-5 text-white" />
-              <input
-                id="image-upload"
-                type="file"
-                accept="image/*"
-                onChange={handleChange}
-                disabled={isUserUpdating}
-                className="hidden"
-              />
-            </label>
+              Upload
+            </button>
+          </div>
+
+          {/* User details */}
+          <div className="flex-1 space-y-6">
+            <div className="text-center md:text-left">
+              <h1 className="text-3xl font-semibold text-gray-800">Profile</h1>
+              <p className="mt-2 text-gray-500">Your profile information</p>
+            </div>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="text-sm text-gray-500 flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  Full Name
+                </div>
+
+                <p className="px-4 py-3 bg-gray-50 rounded-md border border-gray-200 text-gray-700 text-lg">
+                  {user.name}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <div className="text-sm text-gray-500 flex items-center gap-2">
+                  <Mail className="w-4 h-4" />
+                  Email Address
+                </div>
+                <p className="px-4 py-3 bg-gray-50 rounded-md border border-gray-200 text-gray-700 text-lg">
+                  {user.email}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* Uploading status or prompt */}
-        <p className="text-center text-gray-500 mb-4">
-          {isUserUpdating
-            ? "Loading..."
-            : "Click the camera icon to select a file"}
-        </p>
-
-        {/* User details */}
-        <div className="space-y-4 mb-6">
-          <input
-            readOnly
-            value={user.name}
-            className="w-full p-2 border rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
-          />
-          <input
-            readOnly
-            value={user.email}
-            className="w-full p-2 border rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
-          />
-        </div>
-
-        {/* Upload button */}
-        <button
-          type="button"
-          onClick={handleUploadImage}
-          disabled={!selectedImage || isUserUpdating}
-          className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
-        >
-          Upload
-        </button>
       </div>
     </div>
   );
