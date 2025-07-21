@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { axiosInstance } from "../API/axios";
 import User from "../../../BackEnd/models/User";
-import { ToastContainer, toast } from "react-toastify";
 
 export const useChatStore = create((set) => ({
   users: [],
@@ -9,6 +8,7 @@ export const useChatStore = create((set) => ({
   selectedUser: null,
   isMessageLoading: true,
   isUsersLoading: true,
+  isActive: false,
 
   getAllusers: async function () {
     set({ isUsersLoading: true });

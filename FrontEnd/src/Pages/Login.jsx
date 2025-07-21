@@ -1,227 +1,115 @@
+import { Camera, Mail, User } from "lucide-react";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import axios from "axios";
-import socket from "../../socket"; // Ensure this is your socket instance
-import { jwtDecode } from "jwt-decode";
-import { useNavigate, Link } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff, MessageSquare } from "lucide-react";
 import { useUserStore } from "../store/userStore";
-import toast from "react-hot-toast";
 
-const Login = () => {
-  const [message, setMessage] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const { setLoading, setUser } = useUserStore();
-  const navigate = useNavigate();
+function Profile() {
+  // Get user data and profile update method from global state
+  const { user, isUserUpdating, updateProfile } = useUserStore();
 
-  const schema = yup.object().shape({
-    email: yup
-      .string()
-      .email("Invalid email address")
-      .required("Email is required"),
-    password: yup
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .max(20, "Password must not exceed 20 characters")
-      .required("Password is required"),
-  });
+  // Store the selected image file (used later for uploading)
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  const {
-    register,
-    reset,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({ resolver: yupResolver(schema) });
+  // Store the image preview URL (for displaying selected image before upload)
+  const [previewImage, setPreviewImage] = useState("");
 
-  const onSubmit = async (data) => {
-    try {
-      setLoading(true);
-      const response = await axios.post(
-        "http://localhost:5000/user/loginUser",
-        {
-          email: data.email,
-          password: data.password,
-        },
-        { withCredentials: true }
-      );
+  // When a file is selected, store it and create a preview URL
+  const handleChange = (e) => {
+    const image = e.target.files[0]; // get the first file
+    setSelectedImage(image); // store the image file
 
-      const token = response.data.token;
-      const decoded = jwtDecode(token);
-      setUser(decoded);
+    if (!image) return;
 
-      const roomId = decoded.id;
-      const userId = decoded.id;
+    // Generate a temporary URL for the preview image
+    setPreviewImage(URL.createObjectURL(image));
+  };
 
-      if (!socket.connected) {
-        socket.connect();
-      }
+  // Convert selected image to base64 and upload it
+  const handleUploadImage = () => {
+    const reader = new FileReader();
 
-      socket.emit("join-room", { userId, roomId });
+    // Read the selected image as a Data URL (base64 string)
+    reader.readAsDataURL(selectedImage);
 
-      reset();
-
-      toast.success("Login Succesfull");
-
-      navigate("/login", {
-        state: { useName: decoded.name, userId: decoded.userId, room: roomId },
-      });
-    } catch (err) {
-      console.error("Login error:", err);
-      setMessage("Login Failed");
-    } finally {
-      setLoading(false);
-    }
+    // When reading is done, update the profile with new profilePic
+    reader.onload = async () => {
+      const base64Image = reader.result;
+      setPreviewImage(base64Image); // update preview with final image
+      await updateProfile({ profilePic: base64Image }); // upload
+    };
   };
 
   return (
-    <div className="h-screen grid lg:grid-cols-2">
-      {/* Left Side - Form */}
-      <div className="flex flex-col justify-center items-center p-6 sm:p-12 bg-white">
-        <div className="w-full max-w-md space-y-8">
-          {/* Logo */}
-          <div className="text-center mb-8">
-            <div className="flex flex-col items-center gap-2 group">
-              <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                <MessageSquare className="w-6 h-6 text-blue-600" />
-              </div>
-              <h1 className="text-2xl font-bold mt-2">Welcome Back</h1>
-              <p className="text-gray-500">Sign in to your account</p>
-            </div>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text font-medium">Email</span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="email"
-                  className={`input input-bordered w-full pl-10 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.email ? "border-red-500" : ""
-                  }`}
-                  placeholder="you@example.com"
-                  {...register("email")}
-                  autoComplete="off"
-                />
-                {errors.email && (
-                  <span className="mt-1 text-sm text-red-500">
-                    {errors.email.message}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text font-medium">Password</span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  className={`input input-bordered w-full pl-10 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.password ? "border-red-500" : ""
-                  }`}
-                  placeholder="••••••••"
-                  {...register("password")}
-                  autoComplete="off"
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-gray-400" />
-                  )}
-                </button>
-                {errors.password && (
-                  <span className="mt-1 text-sm text-red-500">
-                    {errors.password.message}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg transition-colors disabled:opacity-50"
-              disabled={useUserStore().loading}
-            >
-              {useUserStore().loading ? (
-                <>
-                  <svg
-                    className="animate-spin h-5 w-5 mr-2 inline-block"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  Loading...
-                </>
-              ) : (
-                "Sign in"
-              )}
-            </button>
-            {message && (
-              <div
-                className={`mt-4 text-center ${
-                  message.includes("Success")
-                    ? "text-green-600"
-                    : "text-red-500"
+    <div className="min-h-screen w-full flex items-center justify-center bg-blue-600 p-4">
+      <div className="w-full max-w-5xl mx-auto p-6 bg-white rounded-xl shadow-md">
+        <div className="flex flex-col md:flex-row items-center gap-8">
+          {/* Avatar upload section */}
+          <div className="flex flex-col items-center gap-4">
+            <h1 className="text-2xl font-semibold text-gray-800">Profile</h1>
+            <p className="text-gray-500">Your profile information</p>
+            <div className="relative">
+              <img
+                src={previewImage || user.profilePic || "/avatar.png"}
+                alt="Profile"
+                className="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
+              />
+              <label
+                htmlFor="avatar-upload"
+                className={`absolute bottom-0 right-0 bg-blue-600 p-2 rounded-full cursor-pointer hover:bg-blue-700 transition-all duration-200 ${
+                  isUserUpdating ? "animate-pulse pointer-events-none" : ""
                 }`}
               >
-                {message}
-              </div>
-            )}
-          </form>
-
-          <div className="text-center">
-            <p className="text-gray-500">
-              Don't have an account?{" "}
-              <Link
-                to="/createAccount"
-                className="text-blue-600 hover:underline"
-              >
-                Create account
-              </Link>
+                <Camera className="w-5 h-5 text-white" />
+                <input
+                  type="file"
+                  id="avatar-upload"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleChange}
+                  disabled={isUserUpdating}
+                />
+              </label>
+            </div>
+            <p className="text-sm text-gray-500">
+              {isUserUpdating
+                ? "Uploading..."
+                : "Click the camera icon to update your photo"}
             </p>
+            <button
+              type="button"
+              onClick={handleUploadImage}
+              disabled={!selectedImage || isUserUpdating}
+              className="w-full max-w-xs bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              Upload
+            </button>
+          </div>
+
+          {/* User details */}
+          <div className="flex-1 space-y-6">
+            <div className="space-y-1.5">
+              <div className="text-sm text-gray-500 flex items-center gap-2">
+                <User className="w-4 h-4" />
+                Full Name
+              </div>
+              <p className="px-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 text-gray-700">
+                {user.name}
+              </p>
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="text-sm text-gray-500 flex items-center gap-2">
+                <Mail className="w-4 h-4" />
+                Email Address
+              </div>
+              <p className="px-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 text-gray-700">
+                {user.email}
+              </p>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Right Side - Image/Pattern */}
-      <div className="hidden lg:flex flex-col justify-center items-center bg-gray-100 p-6">
-        <h2 className="text-3xl font-bold">Welcome back!</h2>
-        <p className="text-gray-500 mt-2">
-          Sign in to continue your conversations and catch up with your
-          messages.
-        </p>
-      </div>
     </div>
   );
-};
+}
 
-export default Login;
+export default Profile;
