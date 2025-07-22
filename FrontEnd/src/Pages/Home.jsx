@@ -1,9 +1,17 @@
 import React from "react";
+import NoChatComponent from "./noChatComponent";
+import ChatComponent from "./chatComponent";
+import SideBar from "../Components/SideBar";
 
-export const Home = () => {
+function Home() {
   return (
     <>
-      <h1>Home</h1>
+      <div>
+        <SideBar />
+        {!setSelectedUser ? <NoChatComponent /> : <ChatComponent />}
+      </div>
     </>
   );
-};
+}
+
+export default Home;
