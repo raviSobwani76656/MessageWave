@@ -3,9 +3,8 @@ import "./App.css";
 import Login from "./Pages/Login";
 import CreateAccount from "./Pages/CreateAccount";
 import Navbar from "./Components/Navbar/Navbar";
-import { Home } from "./Pages/Home";
+import Home from "./Pages/Home";
 import { Navigate, Route, Routes } from "react-router-dom";
-import Footer from "./Components/Navbar/Footer";
 import Messages from "./Pages/Messages";
 import { useUserStore } from "./store/userStore";
 import { axiosInstance } from "./API/axios";
@@ -41,10 +40,7 @@ function App() {
         <Navbar />
         <Toaster />
         <Routes>
-          <Route
-            path="/"
-            element={!user ? <Home /> : <Navigate to="/login" />}
-          />
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/createAccount" element={<CreateAccount />} />
           <Route
@@ -53,7 +49,6 @@ function App() {
           />
           <Route path="/profile" element={<Profile />} />
         </Routes>
-        <Footer />
       </div>
     </>
   );

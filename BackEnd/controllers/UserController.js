@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwtTotkenGenerator = require("../utils/JwtTokenGenerator");
 const cloudinary = require("../utils/cloudinary");
 const streamifier = require("streamifier");
+const { Op } = require("sequelize");
 
 const createUser = async (req, res) => {
   try {
@@ -109,9 +110,11 @@ const getAllUsersForSidebar = async (req, res) => {
       attributes: { exclude: ["password"] }, //Exclude password field
     });
 
-    res
-      .status(200)
-      .json({ status: true, message: "Users Fetched SuccessFully" });
+    res.status(200).json({
+      status: true,
+      message: "Users Fetched SuccessFully",
+      filteredUsers,
+    });
   } catch (err) {
     console.log("Error Occured while fetching the users", err);
     return res.status(500).json({

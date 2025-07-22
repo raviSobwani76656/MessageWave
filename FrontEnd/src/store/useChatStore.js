@@ -41,14 +41,14 @@ import { create } from "zustand";
 import { axiosInstance } from "../API/axios";
 import toast from "react-hot-toast";
 
-const getUser = create((set) => ({
+export const useUserChatStore = create((set) => ({
   users: [],
   messages: [],
   selectedUser: null,
   isUserLoading: true,
   isMessagesLoading: false,
 
-  getUser: function () {
+  getUsers: function () {
     set({ isUserLoading: false });
 
     try {
@@ -76,6 +76,5 @@ const getUser = create((set) => ({
     }
   },
 
-
-  const setSelected=()=>
+  setSelectedUser: (selectedUser) => ({ selectedUser: selectedUser }),
 }));
