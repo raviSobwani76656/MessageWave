@@ -113,7 +113,8 @@ const getAllUsersForSidebar = async (req, res) => {
     res.status(200).json({
       status: true,
       message: "Users Fetched SuccessFully",
-      filteredUsers,
+
+      data: filteredUsers,
     });
   } catch (err) {
     console.log("Error Occured while fetching the users", err);

@@ -48,33 +48,32 @@ export const useUserChatStore = create((set) => ({
   isUserLoading: true,
   isMessagesLoading: false,
 
-  getUsers: function () {
-    set({ isUserLoading: false });
+  getUsers: async function () {
+    set({ isUserLoading: true });
 
     try {
-      const res = axiosInstance("/user/getAllUsersForSidebar");
-      set({ users: res.data });
+      const res = await axiosInstance("/user/getAllUsersForSidebar");
+      set({ users: res.data.data });
     } catch (error) {
       console.log("error occrued", error);
       toast.error(error.data.message);
     } finally {
-      set({ isUserLoading: true });
+      set({ isUserLoading: false });
     }
   },
 
-  getMessages: function () {
-    set({ isMessagesLoading: false });
+  getUsers: async function () {
+    set({ isUserLoading: true });
 
     try {
-      const res = axiosInstance("/messages/getMessages");
-      set({ messages: res.data });
+      const res = await axiosInstance("/user/getAllUsersForSidebar");
+      set({ users: res.data.data }); // Access 'data' properly
     } catch (error) {
-      console.error("Error Occured", error);
-      toast.error(error.data.message);
+      console.log("error occurred", error);
+      toast.error(error.response?.data?.message || "Failed to fetch users");
     } finally {
-      set({ isMessagesLoading: true });
+      set({ isUserLoading: false });
     }
   },
-
-  setSelectedUser: (selectedUser) => ({ selectedUser: selectedUser }),
+  setSelectedUser: (selectedUser) => ({ selectedUser }),
 }));
