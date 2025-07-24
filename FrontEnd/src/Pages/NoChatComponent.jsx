@@ -19,7 +19,7 @@ const NoChatComponent = () => {
 
         {/* Welcome Text */}
         <h2 className="text-xl sm:text-2xl font-semibold text-base-content">
-          Welcome to MessageWave!
+          Welcome to MessageWave
         </h2>
         <p className="text-base-content/70 text-sm sm:text-base px-4 sm:px-0">
           Select a conversation from the sidebar or start a new chat to connect
