@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { axiosInstance } from "../API/axios"; // Axios setup
+import { axiosInstance } from "../API/axios";
 
 export const useUserStore = create(
   persist(

@@ -62,18 +62,17 @@ export const useUserChatStore = create((set) => ({
     }
   },
 
-  getUsers: async function () {
-    set({ isUserLoading: true });
+  getMessages: async function () {
+    set({ isMessagesLoading: true });
 
     try {
-      const res = await axiosInstance("/user/getAllUsersForSidebar");
-      set({ users: res.data.data }); // Access 'data' properly
+      const res = await axiosInstance("/messages/getMessages");
+      set({ messages: res.data.data });
     } catch (error) {
       console.log("error occurred", error);
-      toast.error(error.response?.data?.message || "Failed to fetch users");
+      toast.error(error.response?.data?.message || "Failed to fetch Messages");
     } finally {
-      set({ isUserLoading: false });
+      set({ isMessagesLoading: false });
     }
   },
-  setSelectedUser: (selectedUser) => ({ selectedUser }),
 }));
