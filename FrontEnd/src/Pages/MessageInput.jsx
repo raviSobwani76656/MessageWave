@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 
 function MessageInput() {
-  return <div>MessageInput</div>;
+  const [messages, setMessages] = useState("");
+  const [imageMessage, setImageMessage] = useState(null);
+  return <div></div>;
 }
 
 export default MessageInput;

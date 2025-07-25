@@ -1,41 +1,3 @@
-// import { create } from "zustand";
-// import { axiosInstance } from "../API/axios";
-// import User from "../../../BackEnd/models/User";
-
-// export const useChatStore = create((set) => ({
-//   users: [],
-//   messages: [],
-//   selectedUser: null,
-//   isMessageLoading: true,
-//   isUsersLoading: true,
-
-//   getAllusers: async function () {
-//     set({ isUsersLoading: true });
-//     try {
-//       const response = await axiosInstance("messages/user");
-//       set({ users: response.data });
-//     } catch (error) {
-//       console.log("error occrued", error);
-//       toast.error(error.data.messages);
-//     } finally {
-//       set({ isUsersLoading: false });
-//     }
-//   },
-
-//   getMessages: async function () {
-//     set({ isMessageLoading: true });
-
-//     try {
-//       const response = await axiosInstance("/messages/getMessages");
-//       set({ message: response.data });
-//     } catch (error) {
-//       console.log("Error Ocurred", error);
-//     } finally {
-//       set({ isMessageLoading: false });
-//     }
-//   },
-// }));
-
 import React from "react";
 import { create } from "zustand";
 import { axiosInstance } from "../API/axios";
@@ -62,7 +24,7 @@ export const useUserChatStore = create((set) => ({
     }
   },
 
-  getMessages: async function () {
+  getMessages: async function (selectedUser) {
     set({ isMessagesLoading: true });
 
     try {
@@ -75,4 +37,18 @@ export const useUserChatStore = create((set) => ({
       set({ isMessagesLoading: false });
     }
   },
+
+  sendMessages: async function (messageData) {
+    const { messages, selectedUser } = get();
+    try {
+      const res = axiosInstance.post("users/sendMessage", messageData, {
+        withCredentials: true,
+      });
+      set({ messages: [...messages, res.data] });
+    } catch (error) {
+    } finally {
+    }
+  },
+
+  setSelectedUser: (selectedUser) => set({ selectedUser }),
 }));

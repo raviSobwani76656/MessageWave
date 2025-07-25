@@ -13,8 +13,8 @@ function chatComponent() {
   } = useUserChatStore();
 
   useEffect(() => {
-    getMessages(selectedUserId);
-  }, [selectedUserId]);
+    getMessages(selectedUser.id);
+  }, [selectedUser.id]);
 
   if (isUserLoading) {
     return (
