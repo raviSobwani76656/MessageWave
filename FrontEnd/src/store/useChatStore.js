@@ -40,13 +40,14 @@ export const useUserChatStore = create((set) => ({
 
   sendMessages: async function (messageData) {
     const { messages, selectedUser } = get();
+
     try {
       const res = axiosInstance.post("users/sendMessage", messageData, {
         withCredentials: true,
       });
       set({ messages: [...messages, res.data] });
     } catch (error) {
-    } finally {
+      toast.error(error.response?.data?.message || "Failed to Send Messages");
     }
   },
 

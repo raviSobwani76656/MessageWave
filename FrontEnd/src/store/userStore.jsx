@@ -8,6 +8,7 @@ export const useUserStore = create(
       user: null,
       loading: false,
       isUserUpdating: false,
+      onlineUsers: [],
 
       setUser: (user) => set({ user }),
       clearUser: () => set({ user: null }),
