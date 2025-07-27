@@ -1,56 +1,97 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { useUserChatStore } from "../store/useChatStore";
+import toast from "react-hot-toast";
+import { Send, X, Image } from "lucide-react";
 
 function MessageInput() {
-  const [messageText, setMessageText] = useState("");
-  const [imagePreview, setImagePreview] = useState(null);
+  const [messagetext, setMessageText] = useState("");
+  const [previewImage, setPreviewImage] = useState(null);
+  const fileInputRef = useRef(null);
 
-  const useInputRef = useRef(null);
+  const { sendMessages } = useUserChatStore();
 
-  const sendMessage = () => {};
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
 
-  const handleImage = (e) => {};
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewImage(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
 
-  const removeImage = () => {};
+  const removeImage = () => {
+    setPreviewImage(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+
+    if (!messagetext.trim() && !previewImage) return;
+
+    try {
+      await sendMessages({
+        message: messagetext,
+        image: previewImage,
+      });
+
+      setPreviewImage(null);
+      setMessageText("");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    } catch (error) {
+      toast.error("Error occurred while sending the message");
+      console.error("Error occurred while sending the message:", error);
+    }
+  };
+
+  const openFilePicker = () => {
+    fileInputRef.current.click();
+  };
 
   return (
-    <div>
-      <div>
-        <img src={imagePreview} />
-        <button onClick={removeImage}></button>
-      </div>
-      <form onSubmit={sendMessage}>
-        <input
-          type="text"
-          onChange={(e) => setMessageText(e.target.value)}
-          placeholder="Type Your Message...."
-          value={messageText}
-        ></input>
+    <>
+      {previewImage && (
+        <>
+          <img src={previewImage} alt="preview" />
+          <button onClick={removeImage}>
+            <X />
+          </button>
+        </>
+      )}
 
-        <input
-          type="file"
-          accept="image/*"
-          className="hidden"
-          ref={fileInputRef}
-          onChange={handleImageChange}
-        />
+      <form onSubmit={handleSendMessage}>
+        <div>
+          <input
+            value={messagetext}
+            placeholder="Type your message"
+            type="text"
+            onChange={(e) => setMessageText(e.target.value)}
+          />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImage}
+            className="hidden"
+            ref={fileInputRef}
+          />
+          <button onClick={openFilePicker}>
+            {" "}
+            <Image />
+          </button>
 
-        <button
-          type="button"
-          className={`hidden sm:flex btn btn-circle
-                     ${imagePreview ? "text-emerald-500" : "text-zinc-400"}`}
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <Image size={20} />
-        </button>
-        <button
-          type="submit"
-          className="btn btn-sm btn-circle"
-          disabled={!text.trim() && !imagePreview}
-        >
-          <Send size={22} />
-        </button>
+          <button type="submit" disabled={!messagetext.trim() && !previewImage}>
+            <Send size={22} />
+          </button>
+        </div>
       </form>
-    </div>
+    </>
   );
 }
 
