@@ -1,24 +1,40 @@
 const Messages = require("../models/Messages");
 const { Op } = require("sequelize");
+const cloudinary = require("../utils/cloudinary");
 
 const sendMessage = async (req, res) => {
   try {
     // Log the incoming request
     console.log(" Request Body:", req.body);
 
-    const { senderId, receiverId, content } = req.body;
+    const { senderId, receiverId, content, image } = req.body;
 
     // Check if any field is missing
-    if (!senderId || !receiverId || !content) {
-      console.log(" Missing data:", { senderId, receiverId, content });
-      return res.status(400).json({
-        status: false,
-        message: "senderId, receiverId, and content are required",
-      });
+    if (
+      senderId === undefined ||
+      receiverId === undefined ||
+      content === undefined ||
+      content === null
+    ) {
+      return res
+        .status(400)
+        .json({ message: "senderId or receiverId or content is required" });
+    }
+
+    let imageURL;
+
+    if (image) {
+      const imageResponse = await cloudinary.uploader.upload(image);
+      imageURL = imageResponse.secure_url;
     }
 
     // Attempt to create message
-    const message = await Messages.create({ senderId, receiverId, content });
+    const message = await Messages.create({
+      senderId,
+      receiverId,
+      content: content || null,
+      image: imageURL || null,
+    });
 
     return res.status(201).json({
       status: true,
