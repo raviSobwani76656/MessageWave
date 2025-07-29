@@ -2,13 +2,15 @@ import React, { useState, useRef } from "react";
 import { useUserChatStore } from "../store/useChatStore";
 import toast from "react-hot-toast";
 import { Send, X, Image } from "lucide-react";
+import { useUserStore } from "../store/userStore";
 
 function MessageInput() {
   const [messagetext, setMessageText] = useState("");
   const [previewImage, setPreviewImage] = useState(null);
   const fileInputRef = useRef(null);
+  const { user } = useUserStore();
 
-  const { sendMessages } = useUserChatStore();
+  const { sendMessages, selectedUser } = useUserChatStore();
 
   const handleImage = (e) => {
     const file = e.target.files[0];
@@ -36,9 +38,14 @@ function MessageInput() {
 
     if (!messagetext.trim() && !previewImage) return;
 
+    if (!user?.id || !selectedUser?.id) {
+      toast.error("Sender or Receiver id missing");
+    }
     try {
       await sendMessages({
-        message: messagetext,
+        senderId: user.id,
+        receiverId: selectedUser.id,
+        content: messagetext,
         image: previewImage,
       });
 
@@ -59,7 +66,7 @@ function MessageInput() {
     <>
       {previewImage && (
         <>
-          <img src={previewImage} alt="preview" />
+          <img src={previewImage || null} alt="preview" />
           <button onClick={removeImage}>
             <X />
           </button>
