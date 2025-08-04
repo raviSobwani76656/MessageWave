@@ -39,7 +39,7 @@ const Login = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:5000/user/loginUser",
+        "http://localhost:5001/user/loginUser",
         {
           email: data.email,
           password: data.password,
@@ -63,9 +63,11 @@ const Login = () => {
       reset();
       toast.success("Login Successfull");
 
-      navigate("/login", {
-        state: { useName: decoded.name, userId: decoded.userId, room: roomId },
-      });
+      navigate("/");
+
+      // navigate("/login", {
+      //   state: { useName: decoded.name, userId: decoded.userId, room: roomId },
+      // });
     } catch (err) {
       console.error("Login error:", err);
       setMessage("Login Failed");
