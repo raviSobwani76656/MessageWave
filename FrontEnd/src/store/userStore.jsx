@@ -15,6 +15,22 @@ export const useUserStore = create(
       setLoading: (loading) => set({ loading }),
       isLoggedIn: () => !!get().user,
 
+      fetchLoggedInUser: async () => {
+        try {
+          let res = await axiosInstance.get("/user/getUser", {
+            withCredentials: true,
+          });
+          console.log(res);
+          setUser(res.data.user );
+        } catch (error) {
+          set({ loading: false });
+          console.log("Error Occured", error);
+          setUser(null )
+        } finally{
+          set({ loading: false });
+        }
+      },
+
       updateProfile: async (base64Image) => {
         set({ isUserUpdating: true });
         try {

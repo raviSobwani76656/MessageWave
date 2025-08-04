@@ -1,14 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import handleLogout from "../../utils/Logout";
 import { useNavigate } from "react-router-dom";
 import { Menu, X, MessageSquare } from "lucide-react";
 import toast from "react-hot-toast";
+import { useUserStore } from "../../store/userStore";
 
 function Navbar() {
   const logouttoast = () => toast.success("Logout Successfull");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { setUser, user, setLoading } = useUserStore();
+
+  useEffect(() => {
+    useUserStore.getState().fetchLoggedInUser();
+  }, [user]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -46,7 +52,8 @@ function Navbar() {
               : "-translate-y-4 opacity-0 md:translate-y-0 md:opacity-100"
           } border-b border-gray-200 md:border-none`}
         >
-          <NavLink
+
+          {user&&<NavLink
             to="/"
             className={({ isActive }) =>
               `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
@@ -58,8 +65,8 @@ function Navbar() {
             onClick={() => setIsMenuOpen(false)}
           >
             Home
-          </NavLink>
-          <NavLink
+          </NavLink>}
+          {user&&  <NavLink
             to="/messages"
             className={({ isActive }) =>
               `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
@@ -71,69 +78,68 @@ function Navbar() {
             onClick={() => setIsMenuOpen(false)}
           >
             Messages
-          </NavLink>
-          <NavLink
-            to="/contacts"
-            className={({ isActive }) =>
-              `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
-                isActive
-                  ? "bg-gray-100 text-blue-600 font-semibold"
-                  : "hover:text-blue-600"
-              }`
-            }
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Contacts
-          </NavLink>
-          <NavLink
-            to="/login"
-            className={({ isActive }) =>
-              `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
-                isActive
-                  ? "bg-gray-100 text-blue-600 font-semibold"
-                  : "hover:text-blue-600"
-              }`
-            }
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Login
-          </NavLink>
-          <NavLink
-            to="/createAccount"
-            className={({ isActive }) =>
-              `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
-                isActive
-                  ? "bg-gray-100 text-blue-600 font-semibold"
-                  : "hover:text-blue-600"
-              }`
-            }
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Create Account
-          </NavLink>
-          <button
-            onClick={() => {
-              handleLogout(navigate);
-              setIsMenuOpen(false);
-              logouttoast();
-            }}
-            className="text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-red-100 hover:text-red-600"
-          >
-            Logout
-          </button>
-          <NavLink
-            to="/profile"
-            className={({ isActive }) =>
-              `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
-                isActive
-                  ? "bg-gray-100 text-blue-600 font-semibold"
-                  : "hover:text-blue-600"
-              }`
-            }
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Profile
-          </NavLink>
+          </NavLink>}
+        
+
+          {!user && (
+            <NavLink
+              to="/login"
+              className={({ isActive }) =>
+                `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
+                  isActive
+                    ? "bg-gray-100 text-blue-600 font-semibold"
+                    : "hover:text-blue-600"
+                }`
+              }
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Login
+            </NavLink>
+          )}
+          {!user && (
+            <NavLink
+              to="/createAccount"
+              className={({ isActive }) =>
+                `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
+                  isActive
+                    ? "bg-gray-100 text-blue-600 font-semibold"
+                    : "hover:text-blue-600"
+                }`
+              }
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Create Account
+            </NavLink>
+          )}
+
+          {user && (
+            <button
+              onClick={() => {
+                handleLogout(navigate);
+                setIsMenuOpen(false);
+                logouttoast();
+              }}
+              className="text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-red-100 hover:text-red-600"
+            >
+              Logout
+            </button>
+          )}
+
+          {user && (
+            <NavLink
+              to="/profile"
+              className={({ isActive }) =>
+                `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
+                  isActive
+                    ? "bg-gray-100 text-blue-600 font-semibold"
+                    : "hover:text-blue-600"
+                }`
+              }
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Profile
+            </NavLink>
+          )}
         </div>
       </div>
     </nav>

@@ -13,20 +13,24 @@ import { Toaster } from "react-hot-toast";
 import Profile from "./Pages/Profile";
 
 function App() {
-  const { setUser, user, setLoading } = useUserStore();
+  const { setUser, user, loading, setLoading } = useUserStore();
   let isLoggedIn = useUserStore((state) => state.isLoggedIn());
 
+  // useEffect(() => {
+  //   if (!user) {
+  //     axiosInstance
+  //       .get("/user/getUser")
+  //       .then((res) => setUser(res.data.user))
+  //       .catch(() => setUser(null))
+  //       .finally(() => setLoading(false));
+  //   }
+  // }, [user]);
+
   useEffect(() => {
-    if (!user) {
-      axiosInstance
-        .get("/user/getUser")
-        .then((res) => setUser(res.data.user))
-        .catch(() => setUser(null))
-        .finally(() => setLoading(false));
-    }
+    useUserStore.getState().fetchLoggedInUser();
   }, [user]);
 
-  if (!user) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader className="size-10 animate-spin" />
@@ -40,14 +44,20 @@ function App() {
         <Navbar />
         <Toaster />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/createAccount" element={<CreateAccount />} />
+          <Route path="/" element={user&&<Home />} />
+          <Route path="/login" element={!user && <Login />} />
+          <Route
+            path="/createAccount"
+            element={!user ? <CreateAccount /> : <Navigate to="/login" />}
+          />
           <Route
             path="/messages"
-            element={!user ? <Messages /> : <Navigate to="/login" />}
+            element={user ? <Messages /> : <Navigate to="/login" />}
           />
-          <Route path="/profile" element={<Profile />} />
+          <Route
+            path="/profile"
+            element={user ? <Profile /> : <Navigate to="/login" />}
+          />
         </Routes>
       </div>
     </>
