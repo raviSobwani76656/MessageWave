@@ -22,10 +22,6 @@ Image sharing powered by Cloudinary.
 
 
 
-User profile customization (avatars and display names).
-
-
-
 Responsive blue-and-white-themed interface.
 
 
@@ -34,7 +30,6 @@ Technology: Built with React, Node.js, WebSockets, and MySQL.
 
 
 
-User Experience: Delivers fast and engaging performance across desktop and mobile devices.
 
 Tech Stack
 
