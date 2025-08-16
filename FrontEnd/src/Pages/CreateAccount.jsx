@@ -39,7 +39,7 @@ function CreateAccount() {
     console.log("submitting the form", data);
     try {
       const response = await axios.post(
-        "http://localhost:5000/user/CreateUser",
+        "http://localhost:5001/user/CreateUser",
         {
           name: data.name,
           email: data.email,
