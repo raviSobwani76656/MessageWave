@@ -14,7 +14,7 @@ function Navbar() {
 
   useEffect(() => {
     useUserStore.getState().fetchLoggedInUser();
-  }, [user]);
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -52,34 +52,36 @@ function Navbar() {
               : "-translate-y-4 opacity-0 md:translate-y-0 md:opacity-100"
           } border-b border-gray-200 md:border-none`}
         >
-
-          {user&&<NavLink
-            to="/"
-            className={({ isActive }) =>
-              `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
-                isActive
-                  ? "bg-gray-100 text-blue-600 font-semibold"
-                  : "hover:text-blue-600"
-              }`
-            }
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Home
-          </NavLink>}
-          {user&&  <NavLink
-            to="/messages"
-            className={({ isActive }) =>
-              `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
-                isActive
-                  ? "bg-gray-100 text-blue-600 font-semibold"
-                  : "hover:text-blue-600"
-              }`
-            }
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Messages
-          </NavLink>}
-        
+          {user && (
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
+                  isActive
+                    ? "bg-gray-100 text-blue-600 font-semibold"
+                    : "hover:text-blue-600"
+                }`
+              }
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Home
+            </NavLink>
+          )}
+          {user && (
+            <NavLink
+              to="/messages"
+              className={({ isActive }) =>
+                `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
+                  isActive
+                    ? "bg-gray-100 text-blue-600 font-semibold"
+                    : "hover:text-blue-600"
+                }`
+              }
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Messages
+            </NavLink>
+          )}
 
           {!user && (
             <NavLink

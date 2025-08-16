@@ -21,12 +21,11 @@ export const useUserStore = create(
             withCredentials: true,
           });
           console.log(res);
-          setUser(res.data.user );
+          set({ user: res.data.user });
         } catch (error) {
-          set({ loading: false });
+          set({ loading: false, user: null });
           console.log("Error Occured", error);
-          setUser(null )
-        } finally{
+        } finally {
           set({ loading: false });
         }
       },

@@ -28,7 +28,7 @@ function App() {
 
   useEffect(() => {
     useUserStore.getState().fetchLoggedInUser();
-  }, [user]);
+  }, []);
 
   if (loading) {
     return (
@@ -44,7 +44,7 @@ function App() {
         <Navbar />
         <Toaster />
         <Routes>
-          <Route path="/" element={user&&<Home />} />
+          <Route path="/" element={user && <Home />} />
           <Route path="/login" element={!user && <Login />} />
           <Route
             path="/createAccount"
