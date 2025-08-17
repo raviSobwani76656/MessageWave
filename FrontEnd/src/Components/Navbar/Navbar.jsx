@@ -10,7 +10,7 @@ function Navbar() {
   const logouttoast = () => toast.success("Logout Successfull");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const { setUser, user, setLoading } = useUserStore();
+  const { user } = useUserStore();
 
   useEffect(() => {
     useUserStore.getState().fetchLoggedInUser();
@@ -30,29 +30,31 @@ function Navbar() {
         </div>
 
         {/* Hamburger Menu Button for Mobile */}
-        <button
-          className="md:hidden p-1 rounded hover:bg-gray-100 focus:outline-none"
-          onClick={toggleMenu}
-          aria-label="Toggle menu"
-        >
-          {isMenuOpen ? (
-            <X className="w-5 h-5" />
-          ) : (
-            <Menu className="w-5 h-5" />
-          )}
-        </button>
+        {user && (
+          <button
+            className="md:hidden p-1 rounded hover:bg-gray-100 focus:outline-none"
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Menu className="w-5 h-5" />
+            )}
+          </button>
+        )}
 
-        {/* Navigation Links */}
-        <div
-          className={`${
-            isMenuOpen ? "flex" : "hidden"
-          } md:flex flex-col md:flex-row absolute md:static top-12 left-0 right-0 bg-white md:bg-transparent md:items-center space-y-2 md:space-y-0 md:space-x-4 p-4 md:p-0 transition-all duration-300 ease-in-out transform ${
-            isMenuOpen
-              ? "translate-y-0 opacity-100"
-              : "-translate-y-4 opacity-0 md:translate-y-0 md:opacity-100"
-          } border-b border-gray-200 md:border-none`}
-        >
-          {user && (
+        {/* Navigation Links (only if logged in) */}
+        {user && (
+          <div
+            className={`${
+              isMenuOpen ? "flex" : "hidden"
+            } md:flex flex-col md:flex-row absolute md:static top-12 left-0 right-0 bg-white md:bg-transparent md:items-center space-y-2 md:space-y-0 md:space-x-4 p-4 md:p-0 transition-all duration-300 ease-in-out transform ${
+              isMenuOpen
+                ? "translate-y-0 opacity-100"
+                : "-translate-y-4 opacity-0 md:translate-y-0 md:opacity-100"
+            } border-b border-gray-200 md:border-none`}
+          >
             <NavLink
               to="/"
               className={({ isActive }) =>
@@ -66,8 +68,7 @@ function Navbar() {
             >
               Home
             </NavLink>
-          )}
-          {user && (
+
             <NavLink
               to="/messages"
               className={({ isActive }) =>
@@ -81,53 +82,7 @@ function Navbar() {
             >
               Messages
             </NavLink>
-          )}
 
-          {!user && (
-            <NavLink
-              to="/login"
-              className={({ isActive }) =>
-                `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
-                  isActive
-                    ? "bg-gray-100 text-blue-600 font-semibold"
-                    : "hover:text-blue-600"
-                }`
-              }
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Login
-            </NavLink>
-          )}
-          {!user && (
-            <NavLink
-              to="/createAccount"
-              className={({ isActive }) =>
-                `text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-gray-100 ${
-                  isActive
-                    ? "bg-gray-100 text-blue-600 font-semibold"
-                    : "hover:text-blue-600"
-                }`
-              }
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Create Account
-            </NavLink>
-          )}
-
-          {user && (
-            <button
-              onClick={() => {
-                handleLogout(navigate);
-                setIsMenuOpen(false);
-                logouttoast();
-              }}
-              className="text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-red-100 hover:text-red-600"
-            >
-              Logout
-            </button>
-          )}
-
-          {user && (
             <NavLink
               to="/profile"
               className={({ isActive }) =>
@@ -141,8 +96,19 @@ function Navbar() {
             >
               Profile
             </NavLink>
-          )}
-        </div>
+
+            <button
+              onClick={() => {
+                handleLogout(navigate);
+                setIsMenuOpen(false);
+                logouttoast();
+              }}
+              className="text-gray-600 text-sm px-3 py-1 rounded font-medium transition-colors duration-200 hover:bg-red-100 hover:text-red-600"
+            >
+              Logout
+            </button>
+          </div>
+        )}
       </div>
     </nav>
   );
