@@ -2,9 +2,6 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import axios from "axios";
-import socket from "../../socket"; // Ensure this is your socket instance
-import { jwtDecode } from "jwt-decode";
 import { useNavigate, Link } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, MessageSquare } from "lucide-react";
 import { useUserStore } from "../store/userStore";
@@ -13,8 +10,9 @@ import toast from "react-hot-toast";
 const Login = () => {
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { setLoading, setUser } = useUserStore();
   const navigate = useNavigate();
+
+  const { login, isLoggingIn } = useUserStore();
 
   const schema = yup.object().shape({
     email: yup
@@ -36,43 +34,11 @@ const Login = () => {
   } = useForm({ resolver: yupResolver(schema) });
 
   const onSubmit = async (data) => {
-    try {
-      setLoading(true);
-      const response = await axios.post(
-        "http://localhost:5001/user/loginUser",
-        {
-          email: data.email,
-          password: data.password,
-        },
-        { withCredentials: true }
-      );
+    const success = await login(data);
 
-      const token = response.data.token;
-      const decoded = jwtDecode(token);
-      setUser(decoded);
-
-      const roomId = decoded.id;
-      const userId = decoded.id;
-
-      if (!socket.connected) {
-        socket.connect();
-      }
-
-      socket.emit("join-room", { userId, roomId });
-
+    if (success) {
       reset();
-      toast.success("Login Successfull");
-
       navigate("/");
-
-      // navigate("/login", {
-      //   state: { useName: decoded.name, userId: decoded.userId, room: roomId },
-      // });
-    } catch (err) {
-      console.error("Login error:", err);
-      setMessage("Login Failed");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -158,9 +124,9 @@ const Login = () => {
             <button
               type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg transition-colors disabled:opacity-50"
-              disabled={useUserStore().loading}
+              disabled={isLoggingIn}
             >
-              {useUserStore().loading ? (
+              {isLoggingIn ? (
                 <>
                   <svg
                     className="animate-spin h-5 w-5 mr-2 inline-block"

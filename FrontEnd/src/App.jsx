@@ -16,16 +16,6 @@ function App() {
   const { setUser, user, loading, setLoading } = useUserStore();
   let isLoggedIn = useUserStore((state) => state.isLoggedIn());
 
-  // useEffect(() => {
-  //   if (!user) {
-  //     axiosInstance
-  //       .get("/user/getUser")
-  //       .then((res) => setUser(res.data.user))
-  //       .catch(() => setUser(null))
-  //       .finally(() => setLoading(false));
-  //   }
-  // }, [user]);
-
   useEffect(() => {
     useUserStore.getState().fetchLoggedInUser();
   }, []);

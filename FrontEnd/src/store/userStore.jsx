@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { axiosInstance } from "../API/axios";
+import toast from "react-hot-toast";
 
 export const useUserStore = create(
   persist(
@@ -9,22 +10,53 @@ export const useUserStore = create(
       loading: false,
       isUserUpdating: false,
       onlineUsers: [],
+      isLoggingIn: false,
 
       setUser: (user) => set({ user }),
       clearUser: () => set({ user: null }),
       setLoading: (loading) => set({ loading }),
       isLoggedIn: () => !!get().user,
 
-      fetchLoggedInUser: async () => {
+      login: async (credentials) => {
         try {
-          let res = await axiosInstance.get("/user/getUser", {
+          set({ isLoggingIn: true });
+          const res = await axiosInstance.post("/user/loginUser", credentials, {
             withCredentials: true,
           });
-          console.log(res);
+          set({ user: res.data });
+          toast.success("Login Successful");
+          return true;
+        } catch (err) {
+          console.log("Login error:", err);
+          toast.error("Login Failed");
+          return false;
+        } finally {
+          set({ isLoggingIn: false });
+        }
+      },
+
+      logout: async () => {
+        try {
+          set({ isLoggingIn: true });
+          await axiosInstance("/user/logout", {}, { withCredentials: true });
+          set({ user: null });
+          toast.success("Logout Successful");
+        } catch (err) {
+          console.log("Logout failed", err);
+        } finally {
+          set({ isLoggingIn: false });
+        }
+      },
+
+      fetchLoggedInUser: async () => {
+        try {
+          const res = await axiosInstance.get("/user/getUser", {
+            withCredentials: true,
+          });
           set({ user: res.data.user });
-        } catch (error) {
+        } catch (err) {
           set({ loading: false, user: null });
-          console.log("Error Occured", error);
+          console.log("Error fetching user", err);
         } finally {
           set({ loading: false });
         }
@@ -40,8 +72,8 @@ export const useUserStore = create(
             { withCredentials: true }
           );
           set({ user: response.data });
-        } catch (error) {
-          console.error("Error updating profile", error);
+        } catch (err) {
+          console.error("Error updating profile", err);
         } finally {
           set({ isUserUpdating: false });
         }
