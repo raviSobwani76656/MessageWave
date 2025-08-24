@@ -13,7 +13,7 @@ function Home() {
     <div className="flex flex-col md:flex-row h-screen w-screen overflow-hidden bg-base-100">
       {/* Mobile Header with Toggle */}
       <div className="md:hidden flex items-center justify-between p-4 border-b border-base-300 bg-base-100">
-        <span className="font-semibold text-lg">Chatty</span>
+        <span className="font-semibold text-lg">Chat Contacts</span>
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           className="p-2 rounded-lg hover:bg-base-200"

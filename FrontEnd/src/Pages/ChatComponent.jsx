@@ -32,9 +32,14 @@ function ChatComponent() {
   }
 
   return (
-    <div className="flex flex-col h-full w-full">
-      <ChatHeader />
-      <div className="flex-1 overflow-y-auto overflow-x-auto px-2 py-2">
+    <div className="flex flex-col h-full w-full bg-gray-50">
+      {/* Sticky Chat Header */}
+      <div className="sticky top-0 z-10">
+        <ChatHeader />
+      </div>
+
+      {/* Messages Section (scrollable area) */}
+      <div className="flex-1 overflow-y-auto px-4 py-3">
         {isMessagesLoading ? (
           <MessageSkeleton />
         ) : messages.length === 0 ? (
@@ -43,56 +48,55 @@ function ChatComponent() {
           messages.map((message) => (
             <div
               key={message.id}
-              className={`chat flex ${
-                message.senderId === user.id
-                  ? "chat-end justify-end"
-                  : "chat-start justify-start"
+              className={`flex ${
+                message.senderId === user.id ? "justify-end" : "justify-start"
               } mb-4 max-w-3xl mx-auto`}
             >
               <div className="flex items-start gap-2 max-w-[75%]">
-                {/* Profile Picture (small avatar) */}
-                <img
-                  src={
-                    message.senderId === user.id
-                      ? user.profilePic || "/default-avatar.png"
-                      : selectedUser.profilePic || "/default-avatar.png"
-                  }
-                  alt={`Avatar of ${
-                    message.senderId === user.id ? user.name : selectedUser.name
-                  }`}
-                  className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-                />
+                {/* Avatar (always on left for incoming) */}
+                {message.senderId !== user.id && (
+                  <img
+                    src={selectedUser.profilePic || "/default-avatar.png"}
+                    alt={selectedUser.name}
+                    className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                  />
+                )}
 
                 <div className="flex flex-col">
-                  {/* Timestamp */}
-                  <time className="text-xs text-gray-500">
-                    {new Date(message.createdAt).toLocaleString()}
-                  </time>
-
-                  {/* Message Content */}
+                  {/* Message Bubble */}
                   <div
                     className={`p-3 rounded-lg break-words ${
                       message.senderId === user.id
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-200 text-gray-800"
+                        ? "bg-blue-600 text-white rounded-br-none"
+                        : "bg-gray-200 text-gray-800 rounded-bl-none"
                     }`}
                   >
                     {message.image && (
                       <img
                         src={message.image}
-                        alt="Message image"
+                        alt="Message"
                         className="max-w-full h-auto rounded-lg mb-2"
                       />
                     )}
                     {message.content && <p>{message.content}</p>}
                   </div>
+                  <time className="text-xs text-gray-500 mt-1 self-end">
+                    {new Date(message.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </time>
                 </div>
               </div>
             </div>
           ))
         )}
       </div>
-      <MessageInput />
+
+      {/* Sticky Message Input */}
+      <div className="sticky bottom-0 z-10 bg-white">
+        <MessageInput />
+      </div>
     </div>
   );
 }

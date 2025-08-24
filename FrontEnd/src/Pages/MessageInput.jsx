@@ -64,7 +64,7 @@ function MessageInput() {
   };
 
   return (
-    <div className="w-full bg-white">
+    <div className="w-full bg-white sticky bottom-0 z-10">
       {/* Horizontal Line */}
       <div className="w-full border-t border-gray-200"></div>
       {/* Content with Original Padding */}

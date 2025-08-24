@@ -8,11 +8,11 @@ function ChatHeader() {
   const { onlineUsers } = useUserStore();
 
   return (
-    <div className="w-full p-4 bg-blue-600 text-white flex items-center justify-between border-b border-blue-700 shadow-sm">
+    <div className="w-full p-4 bg-blue-600 text-white flex items-center justify-between border-b border-blue-700 shadow-sm sticky top-0 z-10">
       <div className="flex items-center gap-3">
         {/* Profile Picture */}
         <img
-          src={selectedUser.profilePic}
+          src={selectedUser.profilePic || "/avatar.png"}
           alt={`${selectedUser.name}'s profile`}
           className="w-10 h-10 rounded-full object-cover border-2 border-white"
         />

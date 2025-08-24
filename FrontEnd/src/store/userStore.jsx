@@ -53,14 +53,19 @@ export const useUserStore = create(
       },
 
       fetchLoggedInUser: async () => {
+        set({ loading: true });
         try {
           const res = await axiosInstance.get("/user/getUser", {
             withCredentials: true,
           });
-          set({ user: res.data.user });
+          if (res.data?.user) {
+            set({ user: res.data.user });
+          } else {
+            set({ user: null });
+          }
         } catch (err) {
-          set({ loading: false, user: null });
           console.log("Error fetching user", err);
+          set({ user: null });
         } finally {
           set({ loading: false });
         }
