@@ -8,7 +8,7 @@ function ChatHeader() {
   const { onlineUsers } = useUserStore();
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-4 bg-blue-600 text-white flex items-center justify-between border-b border-blue-700 shadow-sm">
+    <div className="w-full p-4 bg-blue-600 text-white flex items-center justify-between border-b border-blue-700 shadow-sm">
       <div className="flex items-center gap-3">
         {/* Profile Picture */}
         <img

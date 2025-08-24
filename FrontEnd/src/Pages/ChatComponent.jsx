@@ -23,7 +23,7 @@ function ChatComponent() {
 
   if (isUserLoading) {
     return (
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col h-full w-full">
         <ChatHeader />
         <MessageSkeleton />
         <MessageInput />
@@ -32,9 +32,8 @@ function ChatComponent() {
   }
 
   return (
-    <div className="flex flex-col h-full max-w-3xl mx-auto">
+    <div className="flex flex-col h-full w-full">
       <ChatHeader />
-
       <div className="flex-1 overflow-y-auto p-4">
         {isMessagesLoading ? (
           <MessageSkeleton />
@@ -93,7 +92,6 @@ function ChatComponent() {
           ))
         )}
       </div>
-
       <MessageInput />
     </div>
   );

@@ -8,76 +8,95 @@ export const useUserChatStore = create((set, get) => ({
   users: [],
   messages: [],
   selectedUser: null,
-  isUserLoading: true,
+  isUserLoading: false,
   isMessagesLoading: false,
 
+  // Fetch all users for the sidebar
   getUsers: async function () {
     set({ isUserLoading: true });
-
     try {
       const res = await axiosInstance("/user/getAllUsersForSidebar");
       set({ users: res.data.data });
     } catch (error) {
-      console.log("error occrued", error);
-      toast.error(error.response?.data?.message);
+      console.error("Error fetching users:", error);
+      toast.error(error.response?.data?.message || "Failed to fetch users");
     } finally {
       set({ isUserLoading: false });
     }
   },
 
-  getMessages: async function (selectedUser) {
-    console.log("Calling getMessages with:", selectedUser);
-    set({ isMessagesLoading: true });
-
+  // Fetch messages between logged-in user and selected user
+  getMessages: async function (selectedUserId) {
     const { user } = useUserStore.getState();
 
-    console.log("Fetching messages for:", {
-      senderId: user?.id,
-      receiverId: selectedUser,
-    });
+    if (!user?.id) {
+      toast.error("You must be logged in to fetch messages");
+      return;
+    }
 
+    if (!selectedUserId) {
+      toast.error("Please select a user to fetch messages");
+      return;
+    }
+
+    set({ isMessagesLoading: true });
     try {
-      const { user } = useUserStore.getState();
-
       const res = await axiosInstance("/message/getMessage", {
         params: {
           senderId: user.id,
-          receiverId: selectedUser,
+          receiverId: selectedUserId,
         },
       });
       set({ messages: res.data.data });
     } catch (error) {
-      console.log("error occurred", error);
-      toast.error(error.response?.data?.message || "Failed to fetch Messages");
+      console.error("Error fetching messages:", error);
+      toast.error(error.response?.data?.message || "Failed to fetch messages");
     } finally {
       set({ isMessagesLoading: false });
     }
   },
 
-  sendMessages: async function ({ senderId, receiverId, content, image }) {
+  // Send a message from logged-in user to selected user
+  sendMessages: async function ({ content, image }) {
     const { messages, selectedUser } = get();
+    const { user } = useUserStore.getState();
 
-    console.log("Sending message with:", {
-      senderId,
-      receiverId,
-      content,
-      image,
-    });
+    if (!user?.id) {
+      toast.error("You must be logged in to send messages");
+      return;
+    }
+
+    if (!selectedUser?.id) {
+      toast.error("Please select a user to send message");
+      return;
+    }
+
+    if (!content && !image) {
+      toast.error("Cannot send empty message");
+      return;
+    }
 
     try {
       const messageData = {
-        senderId,
-        receiverId,
+        senderId: user.id,
+        receiverId: selectedUser.id,
         content,
         image: image || null,
       };
-      const res = await axiosInstance.post("message/sendMessage", messageData);
+
+      const res = await axiosInstance.post("/message/sendMessage", messageData);
       set({ messages: [...messages, res.data.data] });
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to Send Messages");
-      console.log("Error Occured", error);
+      console.error("Error sending message:", error);
+      toast.error(error.response?.data?.message || "Failed to send message");
     }
   },
 
-  setSelectedUser: (selectedUser) => set({ selectedUser }),
+  // Select a user to chat with
+  setSelectedUser: (selectedUser) => {
+    set({ selectedUser, messages: [] });
+    if (selectedUser?.id) {
+      get().getMessages(selectedUser.id);
+    }
+  },
 }));

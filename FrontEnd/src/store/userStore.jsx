@@ -28,7 +28,7 @@ export const useUserStore = create(
           return true;
         } catch (err) {
           console.log("Login error:", err);
-          toast.error("Login Failed");
+          toast.error("Invalid Credentials");
           return false;
         } finally {
           set({ isLoggingIn: false });
@@ -38,7 +38,11 @@ export const useUserStore = create(
       logout: async () => {
         try {
           set({ isLoggingIn: true });
-          await axiosInstance("/user/logout", {}, { withCredentials: true });
+          await axiosInstance.post(
+            "/user/logout",
+            {},
+            { withCredentials: true }
+          );
           set({ user: null });
           toast.success("Logout Successful");
         } catch (err) {
