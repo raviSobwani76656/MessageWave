@@ -10,6 +10,12 @@ const sendMessage = async (req, res) => {
     const { senderId, receiverId, content, image } = req.body;
 
     // Check if any field is missing
+
+    if ((content === undefined || content === null) && !image) {
+      return res
+        .status(400)
+        .json({ message: "Message content or image is required" });
+    }
     if (
       senderId === undefined ||
       receiverId === undefined ||
