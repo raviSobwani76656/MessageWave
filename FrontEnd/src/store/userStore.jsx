@@ -11,11 +11,27 @@ export const useUserStore = create(
       isUserUpdating: false,
       onlineUsers: [],
       isLoggingIn: false,
+      isSigningUp: false,
 
       setUser: (user) => set({ user }),
       clearUser: () => set({ user: null }),
       setLoading: (loading) => set({ loading }),
       isLoggedIn: () => !!get().user,
+
+      createAccount: async (credentials) => {
+        try {
+          set({ isSigningUp: true });
+          const res = await axiosInstance.post("/user/createUser", credentials);
+          set({ user: res.data });
+          toast.success("Account Creation Successfull");
+          return true;
+        } catch (error) {
+          console.log("Error Occrured while creating the Account", error);
+          toast.error(error.response.data.message);
+        } finally {
+          set({ isSigningUp: false });
+        }
+      },
 
       login: async (credentials) => {
         try {

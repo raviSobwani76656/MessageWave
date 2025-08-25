@@ -6,11 +6,16 @@ import axios from "axios";
 import { User, Mail, Lock, Eye, EyeOff, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useUserStore } from "../store/userStore";
+import { useNavigate } from "react-router-dom";
 
 function CreateAccount() {
   const [successMessage, setSuccessMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const { createAccount, isSigningUp } = useUserStore();
+  const navigate = useNavigate();
 
   const schema = yup.object().shape({
     name: yup.string().required("Please Enter your name"),
@@ -36,22 +41,10 @@ function CreateAccount() {
   });
 
   const onSubmit = async (data) => {
-    console.log("submitting the form", data);
-    try {
-      const response = await axios.post(
-        "http://localhost:5001/user/CreateUser",
-        {
-          name: data.name,
-          email: data.email,
-          password: data.password,
-        }
-      );
+    const success = await createAccount(data);
 
+    if (success) {
       reset();
-      toast.success("Account Created Successfully");
-    } catch (err) {
-      console.log("Error occurred:", err);
-      setSuccessMessage("Account Creation Failed");
     }
   };
 
