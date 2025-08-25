@@ -9,7 +9,7 @@ function SideBar({ onClose }) {
 
   useEffect(() => {
     getUsers();
-  }, [getUsers]);
+  }, []); // Remove getUsers from dependency array to prevent infinite loop
 
   if (isUserLoading) return <SidebarSkeleton />;
 

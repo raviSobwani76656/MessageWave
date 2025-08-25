@@ -19,7 +19,7 @@ function ChatComponent() {
     if (selectedUser?.id) {
       getMessages(selectedUser.id);
     }
-  }, [selectedUser?.id, getMessages]);
+  }, [selectedUser?.id]); // Remove getMessages from dependency array to prevent infinite loop
 
   if (isUserLoading) {
     return (
