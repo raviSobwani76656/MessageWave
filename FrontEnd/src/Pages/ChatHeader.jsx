@@ -12,7 +12,7 @@ function ChatHeader() {
       <div className="flex items-center gap-3">
         {/* Profile Picture */}
         <img
-          src={selectedUser.profilePic}
+          src={selectedUser.profilePic || "/avatar.png"}
           alt={`${selectedUser.name}'s profile`}
           className="w-10 h-10 rounded-full object-cover border-2 border-white"
         />

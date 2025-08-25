@@ -55,20 +55,12 @@ function SideBar({ onClose }) {
             >
               {/* Avatar */}
               <div className="relative mx-auto sm:mx-0">
-                {user.profilePic ? (
-                  <img
-                    src={user.profilePic}
-                    alt={`${user.name}'s profile`}
-                    className="size-10 sm:size-12 rounded-full object-cover"
-                  />
-                ) : (
-                  <div
-                    className="size-10 sm:size-12 rounded-full bg-base-300 flex items-center 
-                    justify-center text-base-content/60"
-                  >
-                    {user.name?.[0]?.toUpperCase() || "?"}
-                  </div>
-                )}
+                <img
+                  src={user.profilePic || "/avatar.png"}
+                  alt={`${user.name}'s profile`}
+                  className="size-10 sm:size-12 rounded-full object-cover"
+                />
+
                 {/* Online status indicator */}
                 <Circle
                   className={`absolute bottom-0 right-0 size-3 ${
