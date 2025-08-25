@@ -12,7 +12,7 @@ export const useUserChatStore = create((set, get) => ({
   isMessagesLoading: false,
 
   // Fetch all users for the sidebar
-  getUsers: async function () {
+  getUsers: async () => {
     set({ isUserLoading: true });
     try {
       const res = await axiosInstance("/user/getAllUsersForSidebar");
@@ -26,7 +26,7 @@ export const useUserChatStore = create((set, get) => ({
   },
 
   // Fetch messages between logged-in user and selected user
-  getMessages: async function (selectedUserId) {
+  getMessages: async (selectedUserId) => {
     const { user } = useUserStore.getState();
 
     if (!user?.id) {
@@ -57,7 +57,7 @@ export const useUserChatStore = create((set, get) => ({
   },
 
   // Send a message from logged-in user to selected user
-  sendMessages: async function ({ content, image }) {
+  sendMessages: async ({ content, image }) => {
     const { messages, selectedUser } = get();
     const { user } = useUserStore.getState();
 
