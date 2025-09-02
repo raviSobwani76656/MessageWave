@@ -1,6 +1,7 @@
 import { Camera, Mail, User } from "lucide-react";
 import React, { useState } from "react";
 import { useUserStore } from "../store/userStore";
+import toast from "react-hot-toast";
 
 function Profile() {
   // Get user data and profile update method from global state
@@ -36,6 +37,7 @@ function Profile() {
       setPreviewImage(base64Image); // update preview with final image
       await updateProfile(base64Image);
     };
+    toast.success("Profile Picture Uploaded Successfully");
   };
 
   console.log("user", user);
