@@ -9,7 +9,7 @@ const Messages = sequelize.define("Messages", {
 
   receiverId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   content: {
     type: DataTypes.TEXT,

@@ -23,6 +23,10 @@
 const { Server } = require("socket.io");
 const Messages = require("../models/Messages");
 
+function getReceiverSocketId(userId) {
+  return userSocketMap[userId];
+}
+
 const initializeSocket = (server) => {
   const io = new Server(server, {
     cors: {
@@ -31,8 +35,15 @@ const initializeSocket = (server) => {
     },
   });
 
+  const userSocketMap = {};
+
   io.on("connection", (socket) => {
-    console.log("New socket connected:", socket.id);
+    const userId = socket.handshake.query.userId;
+    if (userId) userSocketMap[userId] = socket.id;
+
+    console.log("User connected:", userId, socket.id);
+
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
     // Join a room
     socket.on("join-room", ({ userId, roomId }) => {
@@ -58,10 +69,12 @@ const initializeSocket = (server) => {
     // Handle disconnection
     socket.on("disconnect", () => {
       console.log("Socket disconnected:", socket.id);
+      delete userSocketMap[userId];
+      io.emit("getOnlineUsers", Object.keys(userSocketMap));
     });
   });
 
   return io;
 };
 
-module.exports = initializeSocket;
+module.exports = { initializeSocket, getReceiverSocketId };

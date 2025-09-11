@@ -1,6 +1,7 @@
 const Messages = require("../models/Messages");
 const { Op } = require("sequelize");
 const cloudinary = require("../utils/cloudinary");
+const { getReceiverSocketId } = require("../socket/socket");
 
 const sendMessage = async (req, res) => {
   try {
@@ -35,6 +36,11 @@ const sendMessage = async (req, res) => {
       content: content || null,
       image: imageURL || null,
     });
+
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      req.io.to(receiverSocketId).emit("newMessage", message);
+    }
 
     return res.status(201).json({
       status: true,
@@ -73,7 +79,6 @@ const getMessage = async (req, res) => {
       order: [["createdAt", "ASC"]],
     });
 
-    console.log("hehehrh");
     return res.status(200).json({
       status: true,
       message: "Messages retreived Successfully",

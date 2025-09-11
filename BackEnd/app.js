@@ -7,11 +7,12 @@ const messageRoutes = require("./routes/MessageRoute");
 const verifyToken = require("./middleware/authMiddleware");
 const http = require("http");
 require("./config/db");
-app.use(express.json());
 const { Server } = require("socket.io");
 const sequelize = require("./config/db");
 const cookieParser = require("cookie-parser");
 const Messages = require("./models/Messages");
+
+app.use(express.json({ limit: "10mb" }));
 
 app.use(
   cors({

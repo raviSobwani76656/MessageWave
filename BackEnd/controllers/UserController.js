@@ -13,7 +13,7 @@ const createUser = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({
         status: false,
-        message: "User already exisits with this email",
+        message: "User already exists with this email",
       });
     }
 
@@ -76,9 +76,16 @@ const loginUser = async (req, res) => {
       maxAge: 60 * 60 * 1000,
     });
 
-    return res
-      .status(201)
-      .json({ status: true, message: "User login Succesfull", token });
+    return res.status(201).json({
+      status: true,
+      message: "User login Succesfull",
+      token,
+      user: {
+        id: userToLogin.id,
+        email: userToLogin.email,
+        name: userToLogin.name,
+      },
+    });
   } catch (err) {
     console.log("Error Occured while logging in", err);
     return res
@@ -88,6 +95,7 @@ const loginUser = async (req, res) => {
 };
 
 const logout = async (req, res) => {
+  console.log("Logout route hit"); // <--- Step 1
   try {
     res.clearCookie("jwt");
     return res
