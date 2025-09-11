@@ -116,7 +116,7 @@ export const useUserStore = create(
         const { user } = get();
         if (!user || get().socket?.connected) return;
 
-        const socket = io(Base_URL, { query: { userId: user._id } });
+        const socket = io(Base_URL, { query: { userId: user.id } });
         socket.connect();
         set({ socket });
 
