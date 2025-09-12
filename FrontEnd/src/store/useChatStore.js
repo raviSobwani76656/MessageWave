@@ -92,6 +92,29 @@ export const useUserChatStore = create((set, get) => ({
     }
   },
 
+  subscribeToMessages: () => {
+    const { selectedUser } = get();
+    if (!selectedUser) return;
+
+    const socket = useUserStore.getState().socket;
+
+    if (!socket) {
+      console.warn("Socket not connected yet, cannot subscribe to messages");
+      return;
+    }
+
+    socket.on("newMessage", (newMessage) => {
+      set((state) => ({ messages: [...state.messages, newMessage] }));
+    });
+  },
+
+  unSubscribeFromMessages: () => {
+    const socket = useUserStore.getState().socket;
+    socket?.off("newMessage");
+  },
+
+  clearChat: () => set({ users: [], messages: [], selectedUser: null }),
+
   // Select a user to chat with
   setSelectedUser: (selectedUser) => {
     set({ selectedUser, messages: [] });

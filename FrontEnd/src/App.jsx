@@ -13,8 +13,10 @@ import { Toaster } from "react-hot-toast";
 import Profile from "./Pages/Profile";
 
 function App() {
-  const { setUser, user, loading, setLoading } = useUserStore();
+  const { setUser, user, loading, setLoading, onlineUsers } = useUserStore();
   let isLoggedIn = useUserStore((state) => state.isLoggedIn());
+
+  console.log(onlineUsers);
 
   useEffect(() => {
     useUserStore.getState().fetchLoggedInUser();

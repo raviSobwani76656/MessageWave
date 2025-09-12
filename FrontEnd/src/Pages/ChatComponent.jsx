@@ -13,13 +13,22 @@ function ChatComponent() {
     isUserLoading,
     selectedUser,
     getMessages,
+    subscribeToMessages,
+    unSubscribeFromMessages,
   } = useUserChatStore();
 
   useEffect(() => {
     if (selectedUser?.id) {
       getMessages(selectedUser.id);
+      subscribeToMessages();
+      return () => unSubscribeFromMessages();
     }
-  }, [selectedUser?.id, getMessages]);
+  }, [
+    selectedUser?.id,
+    getMessages,
+    unSubscribeFromMessages,
+    subscribeToMessages,
+  ]);
 
   if (isUserLoading) {
     return (

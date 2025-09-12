@@ -47,7 +47,7 @@ export const useUserStore = create(
           const res = await axiosInstance.post("/user/loginUser", credentials, {
             withCredentials: true,
           });
-          set({ user: res.data });
+          set({ user: res.data.user });
           get().connectSocket(); // Socket connects after login
           toast.success("Login Successful");
           return true;
@@ -121,6 +121,7 @@ export const useUserStore = create(
         set({ socket });
 
         socket.on("getOnlineUsers", (userIds) => {
+          console.log("Online users from socket:", userIds);
           set({ onlineUsers: userIds });
         });
       },
