@@ -36,6 +36,7 @@ export const useUserStore = create(
           toast.error(
             error.response?.data?.message || "Error creating account"
           );
+          return false;
         } finally {
           set({ isSigningUp: false });
         }

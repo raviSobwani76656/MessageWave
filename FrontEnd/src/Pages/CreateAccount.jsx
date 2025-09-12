@@ -14,7 +14,7 @@ function CreateAccount() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const { createAccount, isSigningUp } = useUserStore();
+  const { createAccount, isSigningUp, setUser, clearUser } = useUserStore();
   const navigate = useNavigate();
 
   const schema = yup.object().shape({
@@ -44,7 +44,9 @@ function CreateAccount() {
     const success = await createAccount(data);
 
     if (success) {
+      clearUser();
       reset();
+      navigate("/");
     }
   };
 

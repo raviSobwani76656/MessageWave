@@ -40,7 +40,7 @@ function App() {
             path="/"
             element={user ? <Home /> : <Navigate to="/login" />}
           />
-          <Route path="/login" element={!user && <Login />} />
+
           <Route
             path="/createAccount"
             element={!user ? <CreateAccount /> : <Navigate to="/" />}
