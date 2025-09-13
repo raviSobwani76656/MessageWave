@@ -59,19 +59,6 @@ function ChatComponent() {
               } mb-4 max-w-3xl mx-auto`}
             >
               <div className="flex items-start gap-2 max-w-[75%]">
-                {/* Profile Picture (small avatar) */}
-                <img
-                  src={
-                    message.senderId === user.id
-                      ? user.profilePic || "/default-avatar.png"
-                      : selectedUser.profilePic || "/default-avatar.png"
-                  }
-                  alt={`Avatar of ${
-                    message.senderId === user.id ? user.name : selectedUser.name
-                  }`}
-                  className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-                />
-
                 <div className="flex flex-col">
                   {/* Timestamp */}
                   <time className="text-xs text-gray-500">

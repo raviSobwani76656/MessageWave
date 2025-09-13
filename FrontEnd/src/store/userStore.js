@@ -48,6 +48,9 @@ export const useUserStore = create(
           const res = await axiosInstance.post("/user/loginUser", credentials, {
             withCredentials: true,
           });
+
+          const userData = res.data.user;
+          console.log(userData);
           set({ user: res.data.user });
           get().connectSocket(); // Socket connects after login
           toast.success("Login Successful");

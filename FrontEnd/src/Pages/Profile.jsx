@@ -51,9 +51,14 @@ function Profile() {
             <div className="relative">
               <div className="w-40 h-40 rounded-full border-2 border-gray-200 border-dashed flex items-center justify-center overflow-hidden">
                 <img
-                  src={previewImage || user.profilePic || "/avatar.png"}
+                  src={
+                    previewImage
+                      ? previewImage
+                      : user.profilePic
+                      ? `${user.profilePic}?t=${new Date().getTime()}`
+                      : "/avatar.png"
+                  }
                   alt="Profile"
-                  className="w-full h-full object-cover"
                 />
               </div>
               <label

@@ -56,7 +56,6 @@ export const useUserChatStore = create((set, get) => ({
     }
   },
 
-  // Send a message from logged-in user to selected user
   sendMessages: async function ({ content, image }) {
     const { messages, selectedUser } = get();
     const { user } = useUserStore.getState();
