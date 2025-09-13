@@ -2,12 +2,12 @@ const { jwtSecret } = require("../config/index");
 const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
-  token = req.cookies.jwt;
+  let token = req.cookies.jwt;
 
   if (!token) {
     console.log("Unauthorised-Token Not Provided");
     return res
-      .status(400)
+      .status(401)
       .json({ status: false, message: "Unauthorised-Token Not Provided" });
   }
 

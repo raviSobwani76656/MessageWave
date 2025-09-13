@@ -23,8 +23,11 @@
 const { Server } = require("socket.io");
 const Messages = require("../models/Messages");
 
+// 🔑 this will track userId -> socketId
+const userSocketMap = new Map();
+
 function getReceiverSocketId(userId) {
-  return userSocketMap[userId];
+  return userSocketMap.get(userId);
 }
 
 const initializeSocket = (server) => {
@@ -35,15 +38,16 @@ const initializeSocket = (server) => {
     },
   });
 
-  const userSocketMap = {};
-
   io.on("connection", (socket) => {
     const userId = socket.handshake.query.userId;
-    if (userId) userSocketMap[userId] = socket.id;
+
+    if (userId) {
+      userSocketMap.set(userId, socket.id);
+    }
 
     console.log("User connected:", userId, socket.id);
 
-    io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    io.emit("getOnlineUsers", Array.from(userSocketMap.keys()));
 
     // Join a room
     socket.on("join-room", ({ userId, roomId }) => {
@@ -69,8 +73,8 @@ const initializeSocket = (server) => {
     // Handle disconnection
     socket.on("disconnect", () => {
       console.log("Socket disconnected:", socket.id);
-      delete userSocketMap[userId];
-      io.emit("getOnlineUsers", Object.keys(userSocketMap));
+      userSocketMap.delete(userId);
+      io.emit("getOnlineUsers", Array.from(userSocketMap.keys()));
     });
   });
 
